@@ -1,11 +1,15 @@
 <template>
   <div id="app">
-    Init
+    <the-navbar></the-navbar>
   </div>
 </template>
 
 <script>
+import TheNavbar from './components/TheNavbar'
 export default {
-  name: 'app'
+  name: 'app',
+  components: {
+    TheNavbar
+  }
 }
 </script>
