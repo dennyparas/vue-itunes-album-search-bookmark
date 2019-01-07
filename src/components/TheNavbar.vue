@@ -1,23 +1,12 @@
 <template>
   <nav class="navbar is-gradient" role="navigation" aria-label="main navigation">
     <div class="container">
-      <div class="navbar-brand">
-        <a class="navbar-item" href="/">
+      <div class="navbar-brand is-inline-flex-mobile is-inline-flex-tablet">
+        <a class="navbar-item " href="/">
           <h2 class="is-size-3">Vue iTunes</h2>
         </a>
-        <a
-          role="button"
-          class="navbar-burger burger"
-          aria-label="menu"
-          aria-expanded="false"
-          data-target="navbarBasicExample"
-        >
-          <span aria-hidden="true"></span>
-          <span aria-hidden="true"></span>
-          <span aria-hidden="true"></span>
-        </a>
       </div>
-      <div class="navbar-end">
+      <div class="navbar-end is-inline-flex-mobile is-inline-flex-tablet">
         <div class="navbar-item">
           <div class="buttons">
             <span class="icon is-large">
@@ -58,5 +47,11 @@ export default {
 }
 .navbar-item {
   color: #fff !important;
+}
+
+.navbar-end {
+    -webkit-box-pack: end !important;
+    -ms-flex-pack: end !important;
+    justify-content: flex-end !important;
 }
 </style>
