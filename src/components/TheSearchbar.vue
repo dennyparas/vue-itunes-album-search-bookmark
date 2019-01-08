@@ -42,8 +42,11 @@ export default {
     }
   },
   computed: {
+    recentSearch () {
+      return this.$store.state.recentSearch
+    },
     filteredDataArray () {
-      return this.data.filter(option => {
+      return this.recentSearch.filter(option => {
         return (
           option
             .toString()

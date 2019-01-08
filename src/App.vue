@@ -14,6 +14,9 @@ export default {
     TheNavbar,
     TheSearchbar
   },
+  created () {
+    this.$store.dispatch('GET_RECENT_SEARCH')
+  },
   methods: {
     searchAlbums (query) {
       this.$store.dispatch('SEARCH_ALBUMS', query)

@@ -9,7 +9,7 @@
       <div class="navbar-end is-inline-flex-mobile is-inline-flex-tablet">
         <div class="navbar-item">
           <div class="buttons">
-            <span class="icon is-large">
+            <span class="icon is-large" v-if="recentSearch.length > 0">
               <b-tooltip type="is-light" label="Recent Search" position="is-bottom">
                 <i @click="showRecentSearch" class="fas fa-history fa-2x"></i>
               </b-tooltip>
@@ -29,6 +29,11 @@
 <script>
 export default {
   name: 'TheNavbar',
+  computed: {
+    recentSearch () {
+      return this.$store.state.recentSearch
+    }
+  },
   methods: {
     showBookmarks () {
       console.log('show bookmarks')
@@ -40,7 +45,19 @@ export default {
 }
 </script>
 
-<style >
+<style scoped >
+.fas {
+  color: #ccc;
+}
+.fas:hover {
+  color: #fff;
+}
+.icon-inactive {
+  color: #ccc;
+}
+.icon-active {
+  color: #fff !important;
+}
 .is-gradient {
   background-color: #008a94 !important;
   background-image: linear-gradient(326deg, #00c8d6, #008a94 94%) !important;
