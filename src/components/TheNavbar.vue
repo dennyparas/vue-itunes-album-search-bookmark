@@ -11,12 +11,12 @@
           <div class="buttons">
             <span class="icon is-large" v-if="recentSearch.length > 0">
               <b-tooltip type="is-light" label="Recent Search" position="is-bottom">
-                <i @click="showRecentSearch" class="fas fa-history fa-2x"></i>
+                <i @click="onClickToggleRecentSearchBox" class="fas fa-history fa-2x" :class="{'icon-active': showRecentSearchBox}"></i>
               </b-tooltip>
             </span>
             <span class="icon is-large">
               <b-tooltip type="is-light" label="Bookmark" position="is-bottom">
-                <i @click="showBookmarks" class="fas fa-heart fa-2x"></i>
+                <i @click="onClickShowBookmarks" class="fas fa-heart fa-2x"></i>
               </b-tooltip>
             </span>
           </div>
@@ -32,14 +32,17 @@ export default {
   computed: {
     recentSearch () {
       return this.$store.state.recentSearch
+    },
+    showRecentSearchBox () {
+      return this.$store.state.showRecentSearchBox
     }
   },
   methods: {
-    showBookmarks () {
-      console.log('show bookmarks')
+    onClickToggleRecentSearchBox () {
+      this.$emit('clickToggleRecentSearchBox')
     },
-    showRecentSearch () {
-      console.log('show recent search')
+    onClickShowBookmarks () {
+      this.$emit('clickShowBookmarks')
     }
   }
 }

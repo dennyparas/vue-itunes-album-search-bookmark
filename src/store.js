@@ -9,7 +9,7 @@ export default new Vuex.Store({
     albums: [],
     searchFailed: false,
     recentSearch: [],
-    showRecentSearch: false
+    showRecentSearchBox: false
   },
   getters: {
     GET_RECENT_SEARCH (state) {
@@ -28,6 +28,9 @@ export default new Vuex.Store({
     },
     CLEAR_SEARCH (state) {
       state.albums = []
+    },
+    TOGGLE_RECENT_SEARCH (state) {
+      state.showRecentSearchBox = !state.showRecentSearchBox
     }
 
   },
@@ -59,7 +62,8 @@ export default new Vuex.Store({
       } else {
         recentSearch = JSON.parse(localStorage.getItem('recent_search'))
         recentSearch.push(payload)
-        localStorage.setItem('recent_search', JSON.stringify(recentSearch))
+        let newRecentSearch = (recentSearch) = recentSearch.filter((item, i) => recentSearch.indexOf(item) === i)
+        localStorage.setItem('recent_search', JSON.stringify(newRecentSearch))
       }
       commit('SET_RECENT_SEARCH', recentSearch)
     },
@@ -68,6 +72,13 @@ export default new Vuex.Store({
       if (recentSearch !== null) {
         commit('SET_RECENT_SEARCH', JSON.parse(recentSearch))
       }
+    },
+    REMOVE_RECENT_SEARCH_ITEM ({ commit }, item) {
+      const newItems = JSON.parse(localStorage.getItem('recent_search'))
+      const oldItems = newItems.indexOf(item)
+      if (oldItems !== -1) newItems.splice(oldItems, 1)
+      localStorage.setItem('recent_search', JSON.stringify(newItems))
+      commit('SET_RECENT_SEARCH', newItems)
     }
   }
 })

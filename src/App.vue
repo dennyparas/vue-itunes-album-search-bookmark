@@ -1,18 +1,32 @@
 <template>
   <div id="app">
-    <the-navbar></the-navbar>
+    <the-navbar @clickToggleRecentSearchBox="toggleRecentSearchBox"></the-navbar>
     <the-searchbar @clickSearch="searchAlbums" @clickClearSearch="clearSearch"></the-searchbar>
+    <recent-search-box v-if="showRecentSearchBox && recentSearch.length > 0" :recentSearch="recentSearch" @clickSearchItem="searchAlbums" @clickRemoveRecentSearchItem="removeRecentSearchItem"></recent-search-box>
+    <album-list></album-list>
   </div>
 </template>
 
 <script>
 import TheNavbar from './components/TheNavbar'
 import TheSearchbar from './components/TheSearchbar'
+import RecentSearchBox from './components/RecentSearchBox'
+import AlbumList from './components/AlbumList'
 export default {
   name: 'app',
   components: {
     TheNavbar,
-    TheSearchbar
+    TheSearchbar,
+    RecentSearchBox,
+    AlbumList
+  },
+  computed: {
+    recentSearch () {
+      return this.$store.state.recentSearch
+    },
+    showRecentSearchBox () {
+      return this.$store.state.showRecentSearchBox
+    }
   },
   created () {
     this.$store.dispatch('GET_RECENT_SEARCH')
@@ -23,6 +37,12 @@ export default {
     },
     clearSearch () {
       this.$store.commit('CLEAR_SEARCH')
+    },
+    toggleRecentSearchBox () {
+      this.$store.commit('TOGGLE_RECENT_SEARCH')
+    },
+    removeRecentSearchItem (item) {
+      this.$store.dispatch('REMOVE_RECENT_SEARCH_ITEM', item)
     }
   }
 }
