@@ -11,7 +11,7 @@
           @select="option => selected = option"
         ></b-autocomplete>
         <p class="control" v-if="searchQuery">
-               <button @click="clearSearchQuery" class="button  is-medium "><i class="fas fa-times"></i></button>
+               <button @click="onClickClearSearch" class="button  is-medium "><i class="fas fa-times"></i></button>
             </p>
       </b-field>
     </div>
@@ -19,6 +19,8 @@
 </template>
 
 <script>
+import _ from 'lodash'
+
 export default {
   name: 'TheSearchbar',
   data () {
@@ -26,6 +28,17 @@ export default {
       data: [],
       searchQuery: '',
       selected: null
+    }
+  },
+  watch: {
+    searchQuery: {
+      handler: _.debounce(function (val) {
+        if (val === '') {
+          this.$store.commit('CLEAR_SEARCH')
+        } else {
+          this.onClickSearch()
+        }
+      }, 1000)
     }
   },
   computed: {
@@ -41,8 +54,12 @@ export default {
     }
   },
   methods: {
-    clearSearchQuery () {
+    onClickSearch () {
+      this.$emit('clickSearch', this.searchQuery)
+    },
+    onClickClearSearch () {
       this.searchQuery = ''
+      this.$emit('clickClearSearch')
     }
   }
 }

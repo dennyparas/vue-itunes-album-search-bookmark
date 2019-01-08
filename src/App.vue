@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <the-navbar></the-navbar>
-    <the-searchbar></the-searchbar>
+    <the-searchbar @clickSearch="searchAlbums" @clickClearSearch="clearSearch"></the-searchbar>
   </div>
 </template>
 
@@ -13,6 +13,14 @@ export default {
   components: {
     TheNavbar,
     TheSearchbar
+  },
+  methods: {
+    searchAlbums (query) {
+      this.$store.dispatch('SEARCH_ALBUMS', query)
+    },
+    clearSearch () {
+      this.$store.commit('CLEAR_SEARCH')
+    }
   }
 }
 </script>
