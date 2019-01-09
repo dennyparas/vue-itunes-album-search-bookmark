@@ -78,6 +78,9 @@ export default new Vuex.Store({
       const oldItems = newItems.indexOf(item)
       if (oldItems !== -1) newItems.splice(oldItems, 1)
       localStorage.setItem('recent_search', JSON.stringify(newItems))
+      if (newItems.length === 0) {
+        commit('TOGGLE_RECENT_SEARCH')
+      }
       commit('SET_RECENT_SEARCH', newItems)
     }
   }
