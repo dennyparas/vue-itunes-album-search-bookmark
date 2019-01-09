@@ -15,7 +15,7 @@
               </b-tooltip>
             </span>
             <span class="icon is-large">
-              <b-tooltip type="is-light" label="Bookmark" position="is-bottom">
+              <b-tooltip type="is-light" label="Bookmarks" position="is-bottom">
                 <i @click="onClickShowBookmarks" class="fas fa-heart fa-2x"></i>
               </b-tooltip>
             </span>
@@ -68,7 +68,6 @@ export default {
 .navbar-item {
   color: #fff !important;
 }
-
 .navbar-end {
     -webkit-box-pack: end !important;
     -ms-flex-pack: end !important;

@@ -3,7 +3,7 @@
     <the-navbar @clickToggleRecentSearchBox="toggleRecentSearchBox"></the-navbar>
     <the-searchbar @clickSearch="searchAlbums" @clickClearSearch="clearSearch"></the-searchbar>
     <recent-search-box v-if="showRecentSearchBox && recentSearch.length > 0" :recentSearch="recentSearch" @clickSearchItem="searchAlbums" @clickRemoveRecentSearchItem="removeRecentSearchItem"></recent-search-box>
-    <album-list></album-list>
+    <album-list @clickBookmarkAlbum="bookmarkAlbum" :albums="albums"></album-list>
   </div>
 </template>
 
@@ -12,6 +12,7 @@ import TheNavbar from './components/TheNavbar'
 import TheSearchbar from './components/TheSearchbar'
 import RecentSearchBox from './components/RecentSearchBox'
 import AlbumList from './components/AlbumList'
+import { mapGetters } from 'vuex'
 export default {
   name: 'app',
   components: {
@@ -21,9 +22,10 @@ export default {
     AlbumList
   },
   computed: {
-    recentSearch () {
-      return this.$store.state.recentSearch
-    },
+    ...mapGetters({
+      recentSearch: 'GET_RECENT_SEARCH',
+      albums: 'GET_ALBUMS'
+    }),
     showRecentSearchBox () {
       return this.$store.state.showRecentSearchBox
     }
@@ -43,7 +45,12 @@ export default {
     },
     removeRecentSearchItem (item) {
       this.$store.dispatch('REMOVE_RECENT_SEARCH_ITEM', item)
+    },
+    bookmarkAlbum (album) {
+      console.log('test', album)
+      this.$store.dispatch('BOOKMARK_ALBUM', album)
     }
+
   }
 }
 </script>
