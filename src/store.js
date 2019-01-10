@@ -56,9 +56,9 @@ export default new Vuex.Store({
 
   },
   actions: {
-    SEARCH_ALBUMS ({ commit, dispatch, state }, payload) {
+    SEARCH_ALBUMS ({ commit, dispatch }, payload) {
       commit('IS_LOADING', true)
-      return axios.get(`https://itunes.apple.com/search?term=${payload}&entity=album&lang=${state.language}`)
+      return axios.get(`${payload.url}`)
         .then((response) => {
           if (response.data.results.length === 0) {
             commit('CLEAR_SEARCH')
@@ -70,7 +70,7 @@ export default new Vuex.Store({
             commit('SET_ALBUM', response.data.results)
 
             setTimeout(() => {
-              dispatch('SAVE_TO_RECENT_SEARCH', payload)
+              dispatch('SAVE_TO_RECENT_SEARCH', payload.query)
             }, 3000)
           }
         })

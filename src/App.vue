@@ -35,7 +35,8 @@ export default {
   },
   methods: {
     searchAlbums (query) {
-      this.$store.dispatch('SEARCH_ALBUMS', query)
+      const payload = { 'url': `/api/search?term=${query}&entity=album`, 'query': query}
+      this.$store.dispatch('SEARCH_ALBUMS', payload)
     },
     clearSearch () {
       this.$store.commit('CLEAR_SEARCH')
