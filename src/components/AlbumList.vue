@@ -7,8 +7,8 @@
           </div>
         </div>
         <div class="columns is-multiline is-mobile" v-if="!isLoading">
-             <template v-if="albums.length > 0 && pageType !== 'bookmarks'">
-             <div class="column is-6" ><span class="is-size-5 has-text-grey"> Search Results</span></div>
+             <template v-if="albums.length > 0 ">
+             <div class="column is-6" ><span class="is-size-5 has-text-grey" v-if="pageType !== 'bookmarks'"> Search Results</span> <span class="is-size-5 has-text-grey" v-else> Bookmarks</span></div>
               <div class="column is-6 has-text-right "><span class="has-text-grey-light is-size-6"> {{albums.length}} results </span></div>
             </template>
             <div class="column is-2-widescreen is-3-desktop is-4-tablet " v-for="(album, index) in displayedAlbums" :key="index">
@@ -21,7 +21,7 @@
                 <div class="card-content">
                   <div class="media">
                     <div class="media-content">
-                      <div class="title is-5 album-name">{{album.collectionCensoredName}}</div>
+                      <div class="title is-size-6-widescreen is-size-6-desktop album-name">{{album.collectionCensoredName}}</div>
                       <div class="subtitle is-6">{{album.artistName}} <br>
                       <span class="has-text-grey-light">{{album.primaryGenreName}}</span></div>
                     </div>
