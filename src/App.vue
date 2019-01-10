@@ -1,9 +1,34 @@
 <template>
   <div id="app">
-    <the-navbar @clickToggleRecentSearchBox="toggleRecentSearchBox"></the-navbar>
-    <the-searchbar @clickSearch="searchAlbums" @clickClearSearch="clearSearch"></the-searchbar>
-    <recent-search-box v-if="showRecentSearchBox && recentSearch.length > 0" :recentSearch="recentSearch" @clickSearchItem="searchAlbums" @clickRemoveRecentSearchItem="removeRecentSearchItem"></recent-search-box>
-    <album-list @clickBookmarkAlbum="bookmarkAlbum" :albums="albums"></album-list>
+    <the-navbar
+      @clickToggleRecentSearchBox="toggleRecentSearchBox"
+      @clickShowBookmarks="showBookmarks"
+      :pageType="pageType"
+      :recentSearch="recentSearch"
+      :showRecentSearchBox="showRecentSearchBox">
+      </the-navbar>
+    <the-searchbar
+      @clickSearch="searchAlbums"
+      @clickClearSearch="clearSearch"
+      :recentSearch="recentSearch"
+      :newSearchQuery="searchQuery"
+      >
+      </the-searchbar>
+    <recent-search-box
+      v-if="showRecentSearchBox && recentSearch.length > 0"
+      :recentSearch="recentSearch"
+      @clickSearchItem="searchAlbums"
+      @clickRemoveRecentSearchItem="removeRecentSearchItem">
+      </recent-search-box>
+    <album-list
+      @clickBookmarkAlbum="bookmarkAlbum"
+      :albums="pageType === 'search' ? albums: bookmarkAlbums"
+      :pageType="pageType"
+      :isLoading="isLoading"
+      :searchFailed="searchFailed"
+      :bookmarkAlbums="bookmarkAlbums"
+      >
+      </album-list>
   </div>
 </template>
 
@@ -24,7 +49,13 @@ export default {
   computed: {
     ...mapGetters({
       recentSearch: 'GET_RECENT_SEARCH',
-      albums: 'GET_ALBUMS'
+      albums: 'GET_ALBUMS',
+      searchQuery: 'SEARCH_QUERY',
+      bookmarkAlbums: 'BOOKMARK_ALBUMS',
+      pageType: 'PAGE_TYPE',
+      showRecentSearchBox: 'SHOW_RECENT_SEARCH_BOX',
+      isLoading: 'IS_LOADING',
+      searchFailed: 'SEARCH_FAILED'
     }),
     showRecentSearchBox () {
       return this.$store.state.showRecentSearchBox
@@ -32,11 +63,14 @@ export default {
   },
   created () {
     this.$store.dispatch('GET_RECENT_SEARCH')
+    this.$store.dispatch('GET_BOOKMARK_ALBUMS')
   },
   methods: {
     searchAlbums (query) {
-      const payload = { 'url': `/api/search?term=${query}&entity=album`, 'query': query}
-      this.$store.dispatch('SEARCH_ALBUMS', payload)
+      if (query !== this.searchQuery) {
+        const payload = { 'url': `/api/search?term=${query}&entity=album`, 'query': query }
+        this.$store.dispatch('SEARCH_ALBUMS', payload)
+      }
     },
     clearSearch () {
       this.$store.commit('CLEAR_SEARCH')
@@ -47,9 +81,12 @@ export default {
     removeRecentSearchItem (item) {
       this.$store.dispatch('REMOVE_RECENT_SEARCH_ITEM', item)
     },
-    bookmarkAlbum (album) {
-      console.log('test', album)
-      this.$store.dispatch('BOOKMARK_ALBUM', album)
+    bookmarkAlbum (album, status) {
+      const payload = { 'album': album, 'status': status }
+      this.$store.dispatch('BOOKMARK_ALBUM', payload)
+    },
+    showBookmarks () {
+      this.$store.commit('SET_PAGE_TYPE', 'bookmarks')
     }
 
   }

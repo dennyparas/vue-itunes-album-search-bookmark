@@ -16,7 +16,7 @@
             </span>
             <span class="icon is-large">
               <b-tooltip type="is-light" label="Bookmarks" position="is-bottom">
-                <i @click="onClickShowBookmarks" class="fas fa-heart fa-2x"></i>
+                <i @click="onClickShowBookmarks" class="fas fa-heart fa-2x" :class="{'icon-active': pageType === 'bookmarks'}"></i>
               </b-tooltip>
             </span>
           </div>
@@ -29,12 +29,18 @@
 <script>
 export default {
   name: 'TheNavbar',
-  computed: {
-    recentSearch () {
-      return this.$store.state.recentSearch
+  props: {
+    showRecentSearchBox: {
+      type: Boolean,
+      required: true
     },
-    showRecentSearchBox () {
-      return this.$store.state.showRecentSearchBox
+    recentSearch: {
+      type: Array,
+      required: true
+    },
+    pageType: {
+      type: String,
+      required: true
     }
   },
   methods: {

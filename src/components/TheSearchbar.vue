@@ -30,21 +30,36 @@ export default {
       selected: null
     }
   },
+  props: {
+    recentSearch: {
+      type: Array,
+      required: true
+    },
+    newSearchQuery: {
+      type: String,
+      required: true
+    }
+  },
+  mounted () {
+    this.searchQuery = 'eminem'
+  },
   watch: {
     searchQuery: {
       handler: _.debounce(function (val) {
         if (val === '') {
           this.$store.commit('CLEAR_SEARCH')
         } else {
-          this.onClickSearch()
+          if (val !== this.newSearchQuery) {
+            this.onClickSearch()
+          }
         }
       }, 1000)
+    },
+    newSearchQuery (val) {
+      this.searchQuery = val
     }
   },
   computed: {
-    recentSearch () {
-      return this.$store.state.recentSearch
-    },
     filteredDataArray () {
       return this.recentSearch.filter(option => {
         return (
