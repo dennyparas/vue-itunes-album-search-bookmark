@@ -7,7 +7,7 @@
           </div>
         </div>
         <div class="columns is-multiline is-mobile" v-if="!isLoading">
-             <template v-if="albums.length > 0">
+             <template v-if="albums.length > 0 && pageType !== 'bookmarks'">
              <div class="column is-6" ><span class="is-size-5 has-text-grey"> Search Results</span></div>
               <div class="column is-6 has-text-right "><span class="has-text-grey-light is-size-6"> {{albums.length}} results </span></div>
             </template>
@@ -34,8 +34,8 @@
                         </b-tooltip>
                     </a>
                     <span class="heart card-footer-item">
-                      <b-tooltip type="is-light" label="Bookmark" position="is-top">
-                        <i @click="onClickBookmarkAlbum(album)" class="fas fa-heart fa-lg" :class="isInBookmark(album.collectionCensoredName)"></i>
+                      <b-tooltip type="is-light" :label="isInBookmark(album.collectionCensoredName) ? 'click to unbookmarked' : 'click to bookmark'" position="is-top">
+                        <i @click="onClickBookmarkAlbum(album)" class="fas fa-heart fa-lg" :class="{'favorite': isInBookmark(album.collectionCensoredName)}"></i>
                       </b-tooltip>
                     </span>
                   </footer>
@@ -62,13 +62,12 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
 export default {
   name: 'AlbumList',
   data () {
     return {
       current: 1,
-      perPage: 15,
+      perPage: 18,
       order: 'is-centered',
       size: '',
       isSimple: false,
@@ -79,14 +78,25 @@ export default {
     albums: {
       type: Array,
       required: true
+    },
+    pageType: {
+      type: String,
+      required: true
+    },
+    isLoading: {
+      type: Boolean,
+      required: true
+    },
+    searchFailed: {
+      type: Boolean,
+      required: true
+    },
+    bookmarkAlbums: {
+      type: Array,
+      required: true
     }
   },
   computed: {
-    ...mapGetters({
-      isLoading: 'IS_LOADING',
-      searchFailed: 'SEARCH_FAILED',
-      bookmarkAlbums: 'BOOKMARK_ALBUMS'
-    }),
     displayedAlbums () {
       return this.paginate(this.albums)
     }
@@ -100,11 +110,15 @@ export default {
       return albums.slice(from, to)
     },
     onClickBookmarkAlbum (album) {
-      this.$emit('clickBookmarkAlbum', album)
+      if (this.isInBookmark(album.collectionCensoredName)) {
+        this.$emit('clickBookmarkAlbum', album, 'unbookmarked')
+      } else {
+        this.$emit('clickBookmarkAlbum', album, 'bookmark')
+      }
     },
     isInBookmark (albumName) {
       const inBookmark = this.bookmarkAlbums.findIndex(album => album.collectionCensoredName === albumName) > -1
-      return inBookmark ? 'favorite' : ''
+      return inBookmark
     }
   }
 }
