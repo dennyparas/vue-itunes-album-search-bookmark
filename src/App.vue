@@ -5,6 +5,7 @@
       @clickShowBookmarks="showBookmarks"
       :pageType="pageType"
       :recentSearch="recentSearch"
+      :bookmarkAlbums="bookmarkAlbums"
       :showRecentSearchBox="showRecentSearchBox">
       </the-navbar>
     <the-searchbar
@@ -71,6 +72,7 @@ export default {
         const payload = { 'url': `/api/search?term=${query}&entity=album`, 'query': query }
         this.$store.dispatch('SEARCH_ALBUMS', payload)
       }
+      this.$store.commit('SET_PAGE_TYPE', 'search')
     },
     clearSearch () {
       this.$store.commit('CLEAR_SEARCH')
@@ -88,7 +90,6 @@ export default {
     showBookmarks () {
       this.$store.commit('SET_PAGE_TYPE', 'bookmarks')
     }
-
   }
 }
 </script>
