@@ -4,7 +4,7 @@
       <div class="columns is-centered">
         <div class="column" :class="searchBoxResize">
           <div class="tag-wrap">
-            <div class="title is-6 has-text-grey-light has-text-centered">Search History</div>
+            <div class="title block is-6 has-text-grey-light has-text-centered">Search History</div>
             <b-field  grouped group-multiline class="has-text-centered">
             <div class="control" v-for="(item, i) in recentSearch" :key="i">
                   <b-tag type="is-primary"
@@ -56,8 +56,12 @@ export default {
   margin-top:20px;
   padding:10px 15px;
   background: #fff;
-      border: 1px solid rgb(231, 231, 231);
-    border-radius: 4px;
+  border: 1px solid rgb(231, 231, 231);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
 }
 
 </style>
