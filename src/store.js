@@ -54,6 +54,7 @@ export default new Vuex.Store({
       state.searchFailed = action
     },
     SET_RECENT_SEARCH (state, data) {
+      state.pageType = 'search'
       state.recentSearch = data
     },
     CLEAR_SEARCH (state) {
@@ -90,7 +91,7 @@ export default new Vuex.Store({
             commit('SET_SEARCH_QUERY', payload.query)
             setTimeout(() => {
               dispatch('SAVE_TO_RECENT_SEARCH', payload.query)
-            }, 3000)
+            }, 2000)
           }
         })
         .catch(() => {
@@ -130,7 +131,6 @@ export default new Vuex.Store({
     REMOVE_RECENT_SEARCH_ITEM ({ commit }, item) {
       if (typeof window !== 'undefined') {
         const newItems = JSON.parse(localStorage.getItem('recent_search'))
-        console.log(newItems.indexOf(item))
         const oldItems = newItems.indexOf(item)
         if (oldItems !== -1) newItems.splice(oldItems, 1)
         localStorage.setItem('recent_search', JSON.stringify(newItems))
