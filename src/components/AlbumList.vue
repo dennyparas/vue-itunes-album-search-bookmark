@@ -7,11 +7,11 @@
           </div>
         </div>
         <div class="columns is-multiline is-mobile" v-if="!isLoading">
-             <template v-if="albums.length > 0 ">
+             <template>
              <div class="column is-6" ><span class="is-size-5 has-text-grey" v-if="pageType !== 'bookmarks'"> Search Results</span> <span class="is-size-5 has-text-grey" v-else> Bookmarks</span></div>
-              <div class="column is-6 has-text-right "><span class="has-text-grey-light is-size-6"> {{albums.length}} results </span></div>
+              <div class="column is-6 has-text-right "><span class="has-text-grey-light is-size-6"> {{albums.length}} result(s) </span></div>
             </template>
-            <div class="column is-2-widescreen is-3-desktop is-4-tablet " v-for="(album, index) in displayedAlbums" :key="index">
+            <div class="column is-3-widescreen is-3-desktop is-4-tablet " v-for="(album, index) in displayedAlbums" :key="index">
               <div class="card">
                 <div class="card-image">
                   <figure class="image is-4by3">
@@ -111,8 +111,27 @@ export default {
     },
     onClickBookmarkAlbum (album) {
       if (this.isInBookmark(album.collectionCensoredName)) {
-        this.$emit('clickBookmarkAlbum', album, 'unbookmarked')
+        this.$dialog.confirm({
+          message: `Are you sure you want to unbookmarked this album? <b>${album.collectionCensoredName} album</b>`,
+          type: 'is-danger',
+          hasIcon: true,
+          onConfirm: () => {
+            this.$emit('clickBookmarkAlbum', album, 'unbookmarked')
+            this.$toast.open({
+              duration: 3000,
+              message: `"${album.collectionCensoredName} album" has been unbookmarked!`,
+              position: 'is-bottom-right',
+              type: 'is-danger'
+            })
+          }
+        })
       } else {
+        this.$toast.open({
+          duration: 3000,
+          message: `"${album.collectionCensoredName} album" bookmarked!`,
+          position: 'is-bottom',
+          type: 'is-info'
+        })
         this.$emit('clickBookmarkAlbum', album, 'bookmark')
       }
     },
