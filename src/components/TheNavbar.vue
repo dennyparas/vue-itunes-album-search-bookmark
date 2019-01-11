@@ -12,11 +12,13 @@
             <span class="icon is-large" v-if="recentSearch.length > 0">
               <b-tooltip type="is-light" label="Recent Search" position="is-bottom">
                 <i @click="onClickToggleRecentSearchBox" class="fas fa-history fa-2x" :class="{'icon-active': showRecentSearchBox}"></i>
+                <span class="badge" v-if="recentSearch.length > 0">{{recentSearch.length}}</span>
               </b-tooltip>
             </span>
             <span class="icon is-large">
               <b-tooltip type="is-light" label="Bookmarks" position="is-bottom">
                 <i @click="onClickShowBookmarks" class="fas fa-heart fa-2x" :class="{'icon-active': pageType === 'bookmarks'}"></i>
+                <span class="badge" v-if="bookmarkAlbums.length > 0">{{bookmarkAlbums.length}}</span>
               </b-tooltip>
             </span>
           </div>
@@ -41,6 +43,10 @@ export default {
     pageType: {
       type: String,
       required: true
+    },
+    bookmarkAlbums: {
+      type: Array,
+      required: true
     }
   },
   methods: {
@@ -55,6 +61,27 @@ export default {
 </script>
 
 <style scoped >
+.badge {
+  position: absolute;
+    right: -11px;
+    top: -5px;
+    display: inline-block;
+    min-width: 19px;
+    padding: 2px 6px;
+    font-size: 10px;
+    font-weight: bold;
+    color: #FFF;
+    line-height: 1.43;
+    vertical-align: text-top;
+    white-space: nowrap;
+    text-align: center;
+    text-shadow: none;
+    background-clip: padding-box;
+    background-color: #EC5252;
+    border: none;
+    border-radius: 15px;
+    z-index: 1;
+}
 .fas {
   color: #ccc;
 }
