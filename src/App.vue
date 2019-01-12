@@ -3,9 +3,11 @@
     <the-navbar
       @clickToggleRecentSearchBox="toggleRecentSearchBox"
       @clickShowBookmarks="showBookmarks"
+      @clickSettings="showSettingsModal"
       :pageType="pageType"
       :recentSearch="recentSearch"
       :bookmarkAlbums="bookmarkAlbums"
+      :settings="settings"
       :showRecentSearchBox="showRecentSearchBox">
       </the-navbar>
     <the-searchbar
@@ -13,6 +15,7 @@
       @clickClearSearch="clearSearch"
       :recentSearch="recentSearch"
       :newSearchQuery="searchQuery"
+      :settings="settings"
       >
       </the-searchbar>
     <recent-search-box
@@ -23,13 +26,18 @@
       </recent-search-box>
     <album-list
       @clickBookmarkAlbum="bookmarkAlbum"
+      @clickUpdateSettings="updateSettings"
       :albums="pageType === 'search' ? albums: bookmarkAlbums"
       :pageType="pageType"
       :isLoading="isLoading"
       :searchFailed="searchFailed"
       :bookmarkAlbums="bookmarkAlbums"
+      :settings="settings"
       >
       </album-list>
+      <b-modal :active.sync="isSettingsModalActive" :canCancel=false has-modal-card >
+        <the-settings :settings="settings" @clickUpdateSettings="updateSettings"></the-settings>
+      </b-modal>
   </div>
 </template>
 
@@ -38,14 +46,21 @@ import TheNavbar from './components/TheNavbar'
 import TheSearchbar from './components/TheSearchbar'
 import RecentSearchBox from './components/RecentSearchBox'
 import AlbumList from './components/AlbumList'
+import TheSettings from './components/TheSettings'
 import { mapGetters } from 'vuex'
 export default {
   name: 'app',
+  data () {
+    return {
+      isSettingsModalActive: false
+    }
+  },
   components: {
     TheNavbar,
     TheSearchbar,
     RecentSearchBox,
-    AlbumList
+    AlbumList,
+    TheSettings
   },
   computed: {
     ...mapGetters({
@@ -56,19 +71,21 @@ export default {
       pageType: 'PAGE_TYPE',
       showRecentSearchBox: 'SHOW_RECENT_SEARCH_BOX',
       isLoading: 'IS_LOADING',
-      searchFailed: 'SEARCH_FAILED'
+      searchFailed: 'SEARCH_FAILED',
+      settings: 'GET_SETTINGS'
     }),
     showRecentSearchBox () {
       return this.$store.state.showRecentSearchBox
     }
   },
   created () {
+    this.$store.dispatch('GET_SETTINGS')
     this.$store.dispatch('GET_RECENT_SEARCH')
     this.$store.dispatch('GET_BOOKMARK_ALBUMS')
   },
   methods: {
     searchAlbums (query) {
-      if (query !== this.searchQuery) {
+      if (query) {
         const payload = { 'url': `/api/search?term=${query}&entity=album`, 'query': query }
         this.$store.dispatch('SEARCH_ALBUMS', payload)
       }
@@ -89,6 +106,13 @@ export default {
     },
     showBookmarks () {
       this.$store.commit('SET_PAGE_TYPE', 'bookmarks')
+    },
+    updateSettings (settingName, settingValue) {
+      const payload = { 'settingName': settingName, 'settingValue': settingValue }
+      this.$store.dispatch('UPDATE_SETTINGS', payload)
+    },
+    showSettingsModal () {
+      this.isSettingsModalActive = true
     }
   }
 }

@@ -6,7 +6,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    searchQuery: '',
+    settings: { initialSearchQuery: 'eminem', searchQuery: '', panelType: 'card', bookmarkIcon: 'fa-star', perPage: '20', youtubeLink: 'false' },
     albums: [],
     bookmarkAlbums: [],
     searchFailed: false,
@@ -18,7 +18,7 @@ export default new Vuex.Store({
   },
   getters: {
     SEARCH_QUERY (state) {
-      return state.searchQuery
+      return state.settings.searchQuery
     },
     GET_ALBUMS (state) {
       return state.albums
@@ -40,12 +40,15 @@ export default new Vuex.Store({
     },
     SHOW_RECENT_SEARCH_BOX (state) {
       return state.showRecentSearchBox
+    },
+    GET_SETTINGS (state) {
+      return state.settings
     }
   },
   mutations: {
     SET_SEARCH_QUERY (state, query) {
       state.pageType = 'search'
-      state.searchQuery = query
+      state.settings.searchQuery = query
     },
     SET_ALBUM (state, data) {
       state.albums = data
@@ -59,7 +62,7 @@ export default new Vuex.Store({
     },
     CLEAR_SEARCH (state) {
       state.albums = []
-      state.searchQuery = ''
+      state.settings.searchQuery = ''
     },
     TOGGLE_RECENT_SEARCH (state) {
       state.showRecentSearchBox = !state.showRecentSearchBox
@@ -72,6 +75,9 @@ export default new Vuex.Store({
     },
     SET_PAGE_TYPE (state, type) {
       state.pageType = type
+    },
+    SET_SETTINGS (state, settings) {
+      state.settings = settings
     }
 
   },
@@ -101,7 +107,7 @@ export default new Vuex.Store({
         })
     },
     SAVE_TO_RECENT_SEARCH ({ commit }, payload) {
-      if (typeof window !== 'undefined') {
+      try {
         let recentSearch = []
         if (localStorage.getItem('recent_search') === null) {
           recentSearch.push(payload)
@@ -114,22 +120,22 @@ export default new Vuex.Store({
           localStorage.setItem('recent_search', JSON.stringify(newRecentSearch))
         }
         commit('SET_RECENT_SEARCH', recentSearch)
-      } else {
-        alert('Your browser is not supported')
+      } catch (e) {
+        alert(e.message)
       }
     },
     GET_RECENT_SEARCH ({ commit }) {
-      if (typeof window !== 'undefined') {
+      try {
         const recentSearch = localStorage.getItem('recent_search')
         if (recentSearch !== null) {
           commit('SET_RECENT_SEARCH', JSON.parse(recentSearch))
         }
-      } else {
-        alert('Your browser is not supported')
+      } catch (e) {
+        alert(e.message)
       }
     },
     REMOVE_RECENT_SEARCH_ITEM ({ commit }, item) {
-      if (typeof window !== 'undefined') {
+      try {
         const newItems = JSON.parse(localStorage.getItem('recent_search'))
         const oldItems = newItems.indexOf(item)
         if (oldItems !== -1) newItems.splice(oldItems, 1)
@@ -138,12 +144,12 @@ export default new Vuex.Store({
           commit('TOGGLE_RECENT_SEARCH')
         }
         commit('SET_RECENT_SEARCH', newItems)
-      } else {
-        alert('Your browser is not supported')
+      } catch (e) {
+        alert(e.message)
       }
     },
     BOOKMARK_ALBUM ({ commit }, payload) {
-      if (typeof window !== 'undefined') {
+      try {
         const newBookmarkItem = {
           artistName: payload.album.artistName,
           collectionCensoredName: payload.album.collectionCensoredName,
@@ -169,19 +175,51 @@ export default new Vuex.Store({
           }
         }
         commit('SET_BOOKMARK_ALBUMS', bookmarkAlbums)
-      } else {
-        alert('Your browser is not supported')
+      } catch (e) {
+        alert(e.message)
       }
     },
     GET_BOOKMARK_ALBUMS ({ commit }) {
-      if (typeof window !== 'undefined') {
+      try {
         const bookmarkAlbums = localStorage.getItem('bookmark_albums')
         if (bookmarkAlbums !== null) {
           commit('SET_BOOKMARK_ALBUMS', JSON.parse(bookmarkAlbums))
         }
-      } else {
-        alert('Your browser is not supported')
+      } catch (e) {
+        alert(e.message)
       }
+    },
+    GET_SETTINGS ({ commit, state }) {
+      try {
+        const settings = localStorage.getItem('settings')
+        if (settings !== null) {
+          commit('SET_SETTINGS', JSON.parse(settings))
+        } else {
+          commit('SET_SETTINGS', state.settings)
+          localStorage.setItem('settings', JSON.stringify(state.settings))
+        }
+      } catch (e) {
+        alert(e.message)
+      }
+    },
+    TOGGLE_PANEL_TYPE ({ commit, state }) {
+      try {
+        const panelType = state.settings.panelType === 'card' ? 'media' : 'card'
+        const newSettings = state.settings
+        newSettings['panelType'] = panelType
+        commit('SET_SETTINGS', newSettings)
+        localStorage.setItem('settings', JSON.stringify(newSettings))
+      } catch (e) {
+        alert(e.message)
+      }
+    },
+    UPDATE_SETTINGS ({ commit, state }, payload) {
+      const settingValue = payload.settingValue
+      const settingName = payload.settingName
+      const newSettings = state.settings
+      newSettings[settingName] = settingValue
+      commit('SET_SETTINGS', newSettings)
+      localStorage.setItem('settings', JSON.stringify(newSettings))
     }
   }
 })

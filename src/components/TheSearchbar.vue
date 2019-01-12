@@ -38,10 +38,15 @@ export default {
     newSearchQuery: {
       type: String,
       required: true
+    },
+    settings: {
+      type: Object,
+      required: true
     }
   },
   mounted () {
-    this.searchQuery = 'eminem'
+    this.searchQuery = this.settings.initialSearchQuery
+    this.onClickSearch()
   },
   watch: {
     searchQuery: {

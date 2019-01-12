@@ -9,16 +9,21 @@
       <div class="navbar-end is-inline-flex-mobile is-inline-flex-tablet">
         <div class="navbar-item">
           <div class="buttons">
-            <span class="icon is-large" v-if="recentSearch.length > 0">
+            <span class="icon is-large nav-icon" v-if="recentSearch.length > 0">
               <b-tooltip type="is-light" label="Recent Search" position="is-bottom">
                 <i @click="onClickToggleRecentSearchBox" class="fas fa-history fa-2x" :class="{'icon-active': showRecentSearchBox}"></i>
                 <span class="badge" v-if="recentSearch.length > 0">{{recentSearch.length}}</span>
               </b-tooltip>
             </span>
-            <span class="icon is-large">
+            <span class="icon is-large nav-icon">
               <b-tooltip type="is-light" label="Bookmarks" position="is-bottom">
-                <i @click="onClickShowBookmarks" class="fas fa-heart fa-2x" :class="{'icon-active': pageType === 'bookmarks'}"></i>
+                <i @click="onClickShowBookmarks" class="fas fa-2x" :class="[{'icon-active': pageType === 'bookmarks'}, settings.bookmarkIcon]"></i>
                 <span class="badge" v-if="bookmarkAlbums.length > 0">{{bookmarkAlbums.length}}</span>
+              </b-tooltip>
+            </span>
+            <span class="icon is-large nav-icon">
+              <b-tooltip type="is-light" label="Settings" position="is-bottom">
+                <i @click="onClickSettings" class="fas fa-cog fa-2x"></i>
               </b-tooltip>
             </span>
           </div>
@@ -47,6 +52,10 @@ export default {
     bookmarkAlbums: {
       type: Array,
       required: true
+    },
+    settings: {
+      type: Object,
+      required: true
     }
   },
   methods: {
@@ -55,6 +64,9 @@ export default {
     },
     onClickShowBookmarks () {
       this.$emit('clickShowBookmarks')
+    },
+    onClickSettings () {
+      this.$emit('clickSettings')
     }
   }
 }
@@ -81,6 +93,9 @@ export default {
     border: none;
     border-radius: 15px;
     z-index: 1;
+}
+.nav-icon {
+  margin-left: 20px
 }
 .fas {
   color: #ccc;

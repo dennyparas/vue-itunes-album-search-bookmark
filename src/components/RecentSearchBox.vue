@@ -45,7 +45,9 @@ export default {
       this.$emit('clickRemoveRecentSearchItem', item)
     },
     onClickSearchItem (item) {
-      this.$emit('clickSearchItem', item)
+      if (item !== this.$store.state.settings.searchQuery) {
+        this.$emit('clickSearchItem', item)
+      }
     }
   }
 }

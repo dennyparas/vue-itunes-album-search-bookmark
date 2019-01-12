@@ -7,12 +7,17 @@
           </div>
         </div>
         <div class="columns is-multiline is-mobile" v-if="!isLoading">
-             <template>
+             <template v-if="albums.length > 0">
              <div class="column is-6" ><span class="is-size-5 has-text-grey" v-if="pageType !== 'bookmarks'"> Search Results</span> <span class="is-size-5 has-text-grey" v-else> Bookmarks</span></div>
-              <div class="column is-6 has-text-right "><span class="has-text-grey-light is-size-6"> {{albums.length}} result(s) </span></div>
+              <div class="column is-5 has-text-right "><span class="has-text-grey-light is-size-6"> {{albums.length}} album(s) </span> </div>
+              <div class="column is-1 has-text-centered">
+                 <b-tooltip type="is-light" label="switch panel view" position="is-top">
+                  <i @click="onClickUpdateSettings" class="fas  fa-lg" :class="[settings.panelType === 'card' ? 'fa-th-list' : 'fa-th']"></i>
+                </b-tooltip>
+              </div>
             </template>
-            <div class="column is-3-widescreen is-3-desktop is-4-tablet " v-for="(album, index) in displayedAlbums" :key="index">
-              <div class="card">
+            <div class="column " :class="[settings.panelType === 'card' ? 'is-3-widescreen is-3-desktop is-4-tablet' : 'is-4-widescreen  is-4-desktop is-6-tablet is-12-mobile']" v-for="(album, index) in displayedAlbums" :key="index">
+              <div class="card" v-if="settings.panelType === 'card'">
                 <div class="card-image">
                   <figure class="image is-4by3">
                     <img :src="album.artworkUrl100" :alt="album.collectionCensoredName">
@@ -20,7 +25,7 @@
                 </div>
                 <div class="card-content">
                   <div class="media">
-                    <div class="media-content">
+                    <div class="media-content overflow-content">
                       <div class="title is-size-6-widescreen is-size-6-desktop album-name">{{album.collectionCensoredName}}</div>
                       <div class="subtitle is-6">{{album.artistName}} <br>
                       <span class="has-text-grey-light">{{album.primaryGenreName}}</span></div>
@@ -30,16 +35,56 @@
                  <footer class="card-footer">
                     <a :href="album.collectionViewUrl" target="_blank" class="card-footer-item">
                       <b-tooltip type="is-light" label="visit itunes page" position="is-top">
-                      <i class="fas fa-external-link-alt"></i>
-                        </b-tooltip>
+                        <i class="fab fa-itunes-note"></i>
+                      </b-tooltip>
                     </a>
                     <span class="heart card-footer-item">
                       <b-tooltip type="is-light" :label="isInBookmark(album.collectionCensoredName) ? 'click to unbookmarked' : 'click to bookmark'" position="is-top">
-                        <i @click="onClickBookmarkAlbum(album)" class="fas fa-heart fa-lg" :class="{'favorite': isInBookmark(album.collectionCensoredName)}"></i>
+                        <i @click="onClickBookmarkAlbum(album)" class="fas fa-lg bookmarkIcon" :class="[{'favorite': isInBookmark(album.collectionCensoredName)}, settings.bookmarkIcon]"></i>
                       </b-tooltip>
                     </span>
+                    <a v-if="settings.youtubeLink === 'true'" :href="`https://www.youtube.com/results?search_query=${album.artistName} - ${album.collectionCensoredName}`" target="_blank" class="card-footer-item">
+                      <b-tooltip type="is-light" label="search on youtube" position="is-top">
+                        <i class="fab fa-youtube"></i>
+                      </b-tooltip>
+                    </a>
                   </footer>
               </div>
+            <!-- Media -->
+              <article class="media media-wrap" v-if="settings.panelType === 'media'">
+                <figure class="media-left">
+                  <p class="image ">
+                    <img :src="album.artworkUrl100" :alt="album.collectionCensoredName">
+                  </p>
+                </figure>
+                <div class="media-content">
+                  <div class="content overflow-content">
+                    <div>
+                      <strong>{{album.collectionCensoredName}}</strong> <br>
+                      {{album.artistName}} ( <span class="has-text-grey-light">{{album.primaryGenreName}}</span> )
+                    </div>
+                  </div>
+                  <div class="level is-mobile">
+                    <div class="level-left">
+                      <a  class="level-item" :href="album.collectionViewUrl" target="_blank">
+                        <b-tooltip type="is-light" label="visit itunes page" position="is-top">
+                          <i class="fab fa-itunes-note"></i>
+                        </b-tooltip>
+                      </a>
+                      <a class="level-item">
+                        <b-tooltip type="is-light" :label="isInBookmark(album.collectionCensoredName) ? 'click to unbookmarked' : 'click to bookmark'" position="is-top">
+                          <i @click="onClickBookmarkAlbum(album)" class="fas bookmarkIcon" :class="[{'favorite': isInBookmark(album.collectionCensoredName)}, settings.bookmarkIcon]"></i>
+                        </b-tooltip>
+                      </a>
+                      <a v-if="settings.youtubeLink === 'true'" class="level-item" :href="`https://www.youtube.com/results?search_query=${album.collectionCensoredName}`" target="_blank">
+                        <b-tooltip type="is-light" label="search on youtube" position="is-top">
+                          <i class="fab fa-youtube"></i>
+                        </b-tooltip>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </article>
             </div>
             <div class="column is-12" v-if="albums.length > 0">
               <hr>
@@ -50,7 +95,7 @@
                   :size="size"
                   :simple="isSimple"
                   :rounded="isRounded"
-                  :per-page="perPage">
+                  :per-page="settings.perPage">
               </b-pagination>
             </div>
           </div>
@@ -67,7 +112,6 @@ export default {
   data () {
     return {
       current: 1,
-      perPage: 18,
       order: 'is-centered',
       size: '',
       isSimple: false,
@@ -94,6 +138,10 @@ export default {
     bookmarkAlbums: {
       type: Array,
       required: true
+    },
+    settings: {
+      type: Object,
+      required: true
     }
   },
   computed: {
@@ -104,7 +152,7 @@ export default {
   methods: {
     paginate (albums) {
       let current = this.current
-      let perPage = this.perPage
+      let perPage = this.settings.perPage
       let from = (current * perPage) - perPage
       let to = (current * perPage)
       return albums.slice(from, to)
@@ -138,6 +186,10 @@ export default {
     isInBookmark (albumName) {
       const inBookmark = this.bookmarkAlbums.findIndex(album => album.collectionCensoredName === albumName) > -1
       return inBookmark
+    },
+    onClickUpdateSettings () {
+      const settingValue = this.settings.panelType === 'card' ? 'media' : 'card'
+      this.$emit('clickUpdateSettings', 'panelType', settingValue)
     }
   }
 }
@@ -154,20 +206,26 @@ export default {
 .media-content {
   width:180px !important;
 }
-.media-content div {
+.overflow-content div {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   width: 100%;
 }
+.media-wrap {
+      border: 2px solid #f5f5f5;
+}
 .album-name {
   font-size: 1.05rem !important;
 }
-.fa-heart {
+i {
   cursor: pointer;
+}
+.bookmarkIcon
+ {
   color: rgb(255, 159, 159);
 }
-.fa-heart:hover {
+.bookmarkIcon:hover {
   color: rgb(255, 21, 21);
 }
 .favorite {
