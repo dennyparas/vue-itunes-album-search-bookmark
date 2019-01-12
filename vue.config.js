@@ -1,11 +1,11 @@
 module.exports = {
-  outputDir: 'client',
+  outputDir: 'dist',
   devServer: {
     proxy: {
-      "/api/": {
-        target: "https://itunes.apple.com",
-        pathRewrite: { "^/api/": "" }
-      },
+      '/api/': {
+        target: 'https://itunes.apple.com',
+        pathRewrite: { '^/api/': '' }
+      }
     }
   }
 }
