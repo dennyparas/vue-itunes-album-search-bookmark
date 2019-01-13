@@ -172,14 +172,14 @@ export default {
     onClickBookmarkAlbum (album) {
       if (this.isInBookmark(album.collectionCensoredName)) {
         this.$dialog.confirm({
-          message: `Are you sure you want to unbookmarked this album? <b>${album.collectionCensoredName} album</b>`,
+          message: `Are you sure you want to unbookmark this album? <b>${album.collectionCensoredName} album</b>`,
           type: 'is-danger',
           hasIcon: true,
           onConfirm: () => {
             this.$emit('clickBookmarkAlbum', album, 'unbookmarked')
             this.$toast.open({
               duration: 3000,
-              message: `"${album.collectionCensoredName} album" has been unbookmarked!`,
+              message: `"${album.collectionCensoredName} album" has been unbookmark!`,
               position: 'is-bottom-right',
               type: 'is-danger'
             })
