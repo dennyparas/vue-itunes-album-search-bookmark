@@ -4,6 +4,7 @@ module.exports = {
     proxy: {
       '/api/': {
         target: 'https://itunes.apple.com',
+        changeOrigin: true,
         pathRewrite: { '^/api/': '' }
       }
     }
