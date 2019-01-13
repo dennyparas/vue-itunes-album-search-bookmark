@@ -74,6 +74,7 @@ export default new Vuex.Store({
       state.isLoading = action
     },
     SET_PAGE_TYPE (state, type) {
+      if (type === 'bookmarks') { state.settings.searchQuery = '' }
       state.pageType = type
     },
     SET_SETTINGS (state, settings) {
