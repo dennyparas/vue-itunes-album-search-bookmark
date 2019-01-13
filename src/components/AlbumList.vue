@@ -99,9 +99,21 @@
               </b-pagination>
             </div>
           </div>
-          <div class="columns is-multiline is-mobile is-centered" v-if="searchFailed">
-             <div class="column "><h3 class="title is-3 has-text-centered">Nothing found. <br> Please Search Again</h3> </div>
+          <template v-if="pageType === 'bookmarks' && albums.length === 0">
+            <div class="columns is-multiline is-mobile">
+              <div class="column">
+                <h3 class="title is-4 has-text-centered">You have no saved bookmarks.</h3>
+              </div>
+            </div>
+          </template>
+          <template v-if="searchFailed">
+          <div class="columns is-multiline is-mobile">
+            <div class="column">
+              <h3 class="title is-4 has-text-centered">Nothing found. </h3>
+              <h3 class="title is-4 has-text-centered"> Please Search Again!</h3>
+            </div>
           </div>
+          </template>
       </div>
     </div>
 </template>
