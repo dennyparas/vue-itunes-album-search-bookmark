@@ -3,26 +3,26 @@
     <div class="container">
       <div class="navbar-brand is-inline-flex-mobile is-inline-flex-tablet">
         <a class="navbar-item " href="/">
-          <h2 class="is-size-3">Vue iTunes</h2>
+          <h2 class="is-size-3-desktop is-size-4-mobile">Vue iTunes</h2>
         </a>
       </div>
       <div class="navbar-end is-inline-flex-mobile is-inline-flex-tablet">
         <div class="navbar-item">
           <div class="buttons">
-            <span class="icon is-large nav-icon" v-if="recentSearch.length > 0">
-              <b-tooltip type="is-light" label="Recent Search" position="is-bottom">
+            <div class="icon is-large nav-icon" v-if="recentSearch.length > 0">
+              <b-tooltip type="is-light" label="Recent Search" position="is-bottom" :active="!isMobile" >
                 <i @click="onClickToggleRecentSearchBox" class="fas fa-history fa-2x" :class="{'icon-active': showRecentSearchBox}"></i>
-                <span class="badge" v-if="recentSearch.length > 0">{{recentSearch.length}}</span>
               </b-tooltip>
-            </span>
+              <span class="badge" v-if="recentSearch.length > 0">{{recentSearch.length}}</span>
+            </div>
             <span class="icon is-large nav-icon">
-              <b-tooltip type="is-light" label="Bookmarks" position="is-bottom">
+              <b-tooltip type="is-light" label="Bookmarks" position="is-bottom" :active="!isMobile">
                 <i @click="onClickShowBookmarks" class="fas fa-2x" :class="[{'icon-active': pageType === 'bookmarks'}, settings.bookmarkIcon]"></i>
-                <span class="badge" v-if="bookmarkAlbums.length > 0">{{bookmarkAlbums.length}}</span>
               </b-tooltip>
+              <span class="badge" v-if="bookmarkAlbums.length > 0">{{bookmarkAlbums.length}}</span>
             </span>
             <span class="icon is-large nav-icon">
-              <b-tooltip type="is-light" label="Settings" position="is-bottom">
+              <b-tooltip type="is-light" label="Settings" position="is-bottom" :active="!isMobile">
                 <i @click="onClickSettings" class="fas fa-cog fa-2x"></i>
               </b-tooltip>
             </span>
@@ -56,6 +56,10 @@ export default {
     settings: {
       type: Object,
       required: true
+    },
+    isMobile: {
+      type: Boolean,
+      required: true
     }
   },
   methods: {
@@ -75,8 +79,8 @@ export default {
 <style scoped >
 .badge {
   position: absolute;
-    right: -11px;
-    top: -5px;
+    right: -2px;
+    top: 4px;
     display: inline-block;
     min-width: 19px;
     padding: 2px 6px;
@@ -95,7 +99,8 @@ export default {
     z-index: 1;
 }
 .nav-icon {
-  margin-left: 20px
+  position: relative;
+  margin-left: 10px
 }
 .fas {
   color: #ccc;

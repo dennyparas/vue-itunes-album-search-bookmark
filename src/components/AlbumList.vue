@@ -1,17 +1,17 @@
 <template>
     <div class="section">
       <div class="container" style="margin-top:0px;">
-        <div class="columns" v-if="isLoading">
+        <div class="columns is-mobile" v-if="isLoading">
           <div class="column loading">
               <b-loading :is-full-page="false" :active.sync="isLoading" :can-cancel="false"></b-loading>
           </div>
         </div>
         <div class="columns is-multiline is-mobile" v-if="!isLoading">
              <template v-if="albums.length > 0">
-             <div class="column is-6" ><span class="is-size-5 has-text-grey" v-if="pageType !== 'bookmarks'"> Search Results</span> <span class="is-size-5 has-text-grey" v-else> Bookmarks</span></div>
+             <div class="column is-6" ><span class="is-size-5-desktop is-size-6-mobile has-text-grey" v-if="pageType !== 'bookmarks'"> Search Results</span> <span class="is-size-5-desktop is-size-6-mobile has-text-grey" v-else> Bookmarks</span></div>
               <div class="column is-5 has-text-right "><span class="has-text-grey-light is-size-6"> {{albums.length}} album(s) </span> </div>
               <div class="column is-1 has-text-centered">
-                 <b-tooltip type="is-light" label="switch panel view" position="is-top">
+                 <b-tooltip type="is-light" label="switch panel view" position="is-top" :active="!isMobile">
                   <i @click="onClickUpdateSettings" class="fas  fa-lg" :class="[settings.panelType === 'card' ? 'fa-th-list' : 'fa-th']"></i>
                 </b-tooltip>
               </div>
@@ -34,17 +34,17 @@
                 </div>
                  <footer class="card-footer">
                     <a :href="album.collectionViewUrl" target="_blank" class="card-footer-item">
-                      <b-tooltip type="is-light" label="visit itunes page" position="is-top">
+                      <b-tooltip type="is-light" label="visit itunes page" position="is-top" :active="!isMobile">
                         <i class="fab fa-itunes-note"></i>
                       </b-tooltip>
                     </a>
                     <span class="heart card-footer-item">
-                      <b-tooltip type="is-light" :label="isInBookmark(album.collectionCensoredName) ? 'click to unbookmarked' : 'click to bookmark'" position="is-top">
+                      <b-tooltip type="is-light" :label="isInBookmark(album.collectionCensoredName) ? 'click to unbookmarked' : 'click to bookmark'" position="is-top" :active="!isMobile">
                         <i @click="onClickBookmarkAlbum(album)" class="fas fa-lg bookmarkIcon" :class="[{'favorite': isInBookmark(album.collectionCensoredName)}, settings.bookmarkIcon]"></i>
                       </b-tooltip>
                     </span>
                     <a v-if="settings.youtubeLink === 'true'" :href="`https://www.youtube.com/results?search_query=${album.artistName} - ${album.collectionCensoredName}`" target="_blank" class="card-footer-item">
-                      <b-tooltip type="is-light" label="search on youtube" position="is-top">
+                      <b-tooltip type="is-light" label="search on youtube" position="is-top" :active="!isMobile">
                         <i class="fab fa-youtube"></i>
                       </b-tooltip>
                     </a>
@@ -67,17 +67,17 @@
                   <div class="level is-mobile">
                     <div class="level-left">
                       <a  class="level-item" :href="album.collectionViewUrl" target="_blank">
-                        <b-tooltip type="is-light" label="visit itunes page" position="is-top">
+                        <b-tooltip type="is-light" label="visit itunes page" position="is-top" :active="!isMobile">
                           <i class="fab fa-itunes-note"></i>
                         </b-tooltip>
                       </a>
                       <a class="level-item">
-                        <b-tooltip type="is-light" :label="isInBookmark(album.collectionCensoredName) ? 'click to unbookmarked' : 'click to bookmark'" position="is-top">
+                        <b-tooltip type="is-light" :label="isInBookmark(album.collectionCensoredName) ? 'click to unbookmarked' : 'click to bookmark'" position="is-top" :active="!isMobile">
                           <i @click="onClickBookmarkAlbum(album)" class="fas bookmarkIcon" :class="[{'favorite': isInBookmark(album.collectionCensoredName)}, settings.bookmarkIcon]"></i>
                         </b-tooltip>
                       </a>
                       <a v-if="settings.youtubeLink === 'true'" class="level-item" :href="`https://www.youtube.com/results?search_query=${album.collectionCensoredName}`" target="_blank">
-                        <b-tooltip type="is-light" label="search on youtube" position="is-top">
+                        <b-tooltip type="is-light" label="search on youtube" position="is-top" :active="!isMobile">
                           <i class="fab fa-youtube"></i>
                         </b-tooltip>
                       </a>
@@ -154,6 +154,10 @@ export default {
     settings: {
       type: Object,
       required: true
+    },
+    isMobile: {
+      type: Boolean,
+      required: true
     }
   },
   computed: {
@@ -208,6 +212,9 @@ export default {
 </script>
 
 <style scoped>
+.media:first-child {
+  z-index: 1;
+}
 .loading {
   padding-top:50px;
   height: 300px;

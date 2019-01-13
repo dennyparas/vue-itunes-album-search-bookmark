@@ -8,6 +8,7 @@
       :recentSearch="recentSearch"
       :bookmarkAlbums="bookmarkAlbums"
       :settings="settings"
+      :isMobile="isMobile"
       :showRecentSearchBox="showRecentSearchBox">
       </the-navbar>
     <the-searchbar
@@ -33,6 +34,7 @@
       :searchFailed="searchFailed"
       :bookmarkAlbums="bookmarkAlbums"
       :settings="settings"
+      :isMobile="isMobile"
       >
       </album-list>
       <b-modal :active.sync="isSettingsModalActive" :canCancel=false has-modal-card >
@@ -52,7 +54,8 @@ export default {
   name: 'app',
   data () {
     return {
-      isSettingsModalActive: false
+      isSettingsModalActive: false,
+      isMobile: false
     }
   },
   components: {
@@ -82,6 +85,15 @@ export default {
     this.$store.dispatch('GET_SETTINGS')
     this.$store.dispatch('GET_RECENT_SEARCH')
     this.$store.dispatch('GET_BOOKMARK_ALBUMS')
+  },
+  mounted () {
+    window.onresize = () => {
+      if (window.innerWidth <= 768) {
+        this.isMobile = true
+      } else {
+        this.isMobile = false
+      }
+    }
   },
   methods: {
     searchAlbums (query) {
