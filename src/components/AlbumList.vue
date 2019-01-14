@@ -1,23 +1,19 @@
 <template>
     <div class="section">
       <div class="container" style="margin-top:0px;">
-        <div class="columns is-mobile" v-if="isLoading">
-          <div class="column loading">
-              <b-loading :is-full-page="false" :active.sync="isLoading" :can-cancel="false"></b-loading>
+        <div class="columns is-multiline is-mobile" v-if="!isLoading && albums.length > 0">
+          <div class="column is-6" ><span class="is-size-5-desktop is-size-6-mobile has-text-grey" v-if="pageType !== 'bookmarks'"> Search Results</span> <span class="is-size-5-desktop is-size-6-mobile has-text-grey" v-else> Bookmarks</span></div>
+          <div class="column is-5 has-text-right "><span class="has-text-grey-light is-size-6"> {{albums.length}} album(s) </span> </div>
+          <div class="column is-1 has-text-left">
+              <b-tooltip type="is-light" label="switch panel view" position="is-top" :active="!isMobile">
+              <i @click="onClickUpdateSettings" class="fas  fa-lg" :class="[settings.panelType === 'card' ? 'fa-th-list' : 'fa-th']"></i>
+            </b-tooltip>
           </div>
         </div>
-        <div class="columns is-multiline is-mobile" v-if="!isLoading">
-             <template v-if="albums.length > 0">
-             <div class="column is-6" ><span class="is-size-5-desktop is-size-6-mobile has-text-grey" v-if="pageType !== 'bookmarks'"> Search Results</span> <span class="is-size-5-desktop is-size-6-mobile has-text-grey" v-else> Bookmarks</span></div>
-              <div class="column is-5 has-text-right "><span class="has-text-grey-light is-size-6"> {{albums.length}} album(s) </span> </div>
-              <div class="column is-1 has-text-centered">
-                 <b-tooltip type="is-light" label="switch panel view" position="is-top" :active="!isMobile">
-                  <i @click="onClickUpdateSettings" class="fas  fa-lg" :class="[settings.panelType === 'card' ? 'fa-th-list' : 'fa-th']"></i>
-                </b-tooltip>
-              </div>
-            </template>
-            <div class="column " :class="[settings.panelType === 'card' ? 'is-3-widescreen is-3-desktop is-4-tablet' : 'is-4-widescreen  is-4-desktop is-6-tablet is-12-mobile']" v-for="(album, index) in displayedAlbums" :key="index">
-              <div class="card" v-if="settings.panelType === 'card'">
+        <transition name="list" mode="out-in" >
+        <div class="columns is-multiline is-mobile" v-if="!isLoading && displayedAlbums.length > 0" :key="pageType">
+            <div  class="column " :class="[settings.panelType === 'card' ? 'is-3-widescreen is-3-desktop is-4-tablet' : 'is-4-widescreen  is-4-desktop is-6-tablet is-12-mobile']" v-for="album in displayedAlbums" :key="album.collectionId">
+              <div class="card" v-if="settings.panelType === 'card'" >
                 <div class="card-image">
                   <figure class="image is-4by3">
                     <img :src="replaceArtworkUrlSize(album.artworkUrl100, '300x250')" :alt="album.collectionCensoredName">
@@ -86,6 +82,14 @@
                 </div>
               </article>
             </div>
+            <div class="columns is-mobile" v-if="isLoading">
+              <div class="column loading">
+                  <b-loading :is-full-page="false" :active.sync="isLoading" :can-cancel="false"></b-loading>
+              </div>
+            </div>
+          </div>
+          </transition>
+          <div class="columns is-multiline is-mobile" v-if="!isLoading && albums.length > 0">
             <div class="column is-12" v-if="albums.length > 0">
               <hr>
               <b-pagination

@@ -4,6 +4,7 @@
       @clickToggleRecentSearchBox="toggleRecentSearchBox"
       @clickShowBookmarks="showBookmarks"
       @clickSettings="showSettingsModal"
+      @clickTitle="setPageType('search')"
       :pageType="pageType"
       :recentSearch="recentSearch"
       :bookmarkAlbums="bookmarkAlbums"
@@ -25,18 +26,18 @@
       @clickSearchItem="searchAlbums"
       @clickRemoveRecentSearchItem="removeRecentSearchItem">
       </recent-search-box>
-    <album-list
-      @clickBookmarkAlbum="bookmarkAlbum"
-      @clickUpdateSettings="updateSettings"
-      :albums="pageType === 'search' ? albums: bookmarkAlbums"
-      :pageType="pageType"
-      :isLoading="isLoading"
-      :searchFailed="searchFailed"
-      :bookmarkAlbums="bookmarkAlbums"
-      :settings="settings"
-      :isMobile="isMobile"
-      >
-      </album-list>
+      <album-list
+        @clickBookmarkAlbum="bookmarkAlbum"
+        @clickUpdateSettings="updateSettings"
+        :albums="pageType === 'search' ? albums: bookmarkAlbums"
+        :pageType="pageType"
+        :isLoading="isLoading"
+        :searchFailed="searchFailed"
+        :bookmarkAlbums="bookmarkAlbums"
+        :settings="settings"
+        :isMobile="isMobile"
+        >
+        </album-list>
       <b-modal
         :active.sync="isSettingsModalActive"
         :canCancel=false has-modal-card >
@@ -130,6 +131,11 @@ export default {
     },
     showSettingsModal () {
       this.isSettingsModalActive = true
+    },
+    setPageType (pageType) {
+      if (pageType !== this.pageType) {
+        this.$store.commit('SET_PAGE_TYPE', pageType)
+      }
     }
   }
 }
@@ -163,4 +169,18 @@ $link-focus-border: $primary;
 // Import Bulma and Buefy styles
 @import "~bulma";
 @import "~buefy/src/scss/buefy";
+
+.list-enter-active,
+{
+  transition: all .5s;
+}
+.list-leave-active {
+  transition: all .5s;
+}
+.list-enter,
+.list-leave-to {
+  opacity: 0;
+   transform: translateY(20px);
+}
+
 </style>
