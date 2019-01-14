@@ -2,9 +2,9 @@
   <nav class="navbar is-gradient" role="navigation" aria-label="main navigation">
     <div class="container">
       <div class="navbar-brand is-inline-flex-mobile is-inline-flex-tablet">
-        <a class="navbar-item " href="/">
+        <div class="navbar-item" @click="onClickTitle">
           <h2 class="is-size-3-desktop is-size-4-mobile">Vue iTunes</h2>
-        </a>
+        </div>
       </div>
       <div class="navbar-end is-inline-flex-mobile is-inline-flex-tablet">
         <div class="navbar-item">
@@ -71,12 +71,18 @@ export default {
     },
     onClickSettings () {
       this.$emit('clickSettings')
+    },
+    onClickTitle () {
+      this.$emit('clickTitle')
     }
   }
 }
 </script>
 
 <style scoped >
+.navbar-item {
+  cursor: pointer
+}
 .badge {
   position: absolute;
     right: -2px;
