@@ -126,7 +126,6 @@ export default {
   },
   methods: {
     onClickUpdateSettings (settingName, settingValue) {
-      console.log(settingValue)
       this.$emit('clickUpdateSettings', settingName, settingValue)
     }
   }

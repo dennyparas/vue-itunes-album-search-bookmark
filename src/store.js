@@ -84,24 +84,29 @@ export default new Vuex.Store({
   },
   actions: {
     SEARCH_ALBUMS ({ commit, dispatch }, payload) {
+      // show loading animation
       commit('IS_LOADING', true)
       return axios.get(`${payload.url}`)
         .then((response) => {
           if (response.data.results.length === 0) {
+            // if search response data results is empty commit search failed and clear the search input
             commit('CLEAR_SEARCH')
             commit('SEARCH_FAILED', true)
             commit('IS_LOADING', false)
           } else {
+            // assign the search data results to set album state and query to set search query state
             commit('IS_LOADING', false)
             commit('SEARCH_FAILED', false)
             commit('SET_ALBUM', response.data.results)
             commit('SET_SEARCH_QUERY', payload.query)
+            // wait 2 second to assign the new search query to save to recent search action
             setTimeout(() => {
               dispatch('SAVE_TO_RECENT_SEARCH', payload.query)
             }, 2000)
           }
         })
         .catch(() => {
+          // if error commit search failed and clear the search input
           commit('CLEAR_SEARCH')
           commit('SEARCH_FAILED', true)
           commit('IS_LOADING', false)
@@ -110,16 +115,20 @@ export default new Vuex.Store({
     SAVE_TO_RECENT_SEARCH ({ commit }, payload) {
       try {
         let recentSearch = []
+        // check if localstorage have recent search datas
         if (localStorage.getItem('recent_search') === null) {
+          // if localstorage is null push the new recent search to empty array
           recentSearch.push(payload)
           localStorage.setItem('recent_search', JSON.stringify(recentSearch))
         } else {
+          // if localstorage is not null append the new recent search to the end of array
           recentSearch = JSON.parse(localStorage.getItem('recent_search'))
           recentSearch.push(payload)
-          // remove duplicate
+          // check if the new recent search is already in the array then remove duplicate and save to localstorage
           let newRecentSearch = (recentSearch) = recentSearch.filter((item, i) => recentSearch.indexOf(item) === i)
           localStorage.setItem('recent_search', JSON.stringify(newRecentSearch))
         }
+        // assign a new array to the set recent search state
         commit('SET_RECENT_SEARCH', recentSearch)
       } catch (e) {
         alert(e.message)
@@ -127,8 +136,11 @@ export default new Vuex.Store({
     },
     GET_RECENT_SEARCH ({ commit }) {
       try {
+        // assign recent_search localstorage dato to a recentSearch variable
         const recentSearch = localStorage.getItem('recent_search')
+        // check if recentSearch variable is not null
         if (recentSearch !== null) {
+          // if not null assign a new array to the  recentSearch state
           commit('SET_RECENT_SEARCH', JSON.parse(recentSearch))
         }
       } catch (e) {
@@ -137,41 +149,56 @@ export default new Vuex.Store({
     },
     REMOVE_RECENT_SEARCH_ITEM ({ commit }, item) {
       try {
-        const newItems = JSON.parse(localStorage.getItem('recent_search'))
-        const oldItems = newItems.indexOf(item)
-        if (oldItems !== -1) newItems.splice(oldItems, 1)
-        localStorage.setItem('recent_search', JSON.stringify(newItems))
-        if (newItems.length === 0) {
+        // assign recent_search localstorage to recentSearchItems variable
+        const recentSearchItems = JSON.parse(localStorage.getItem('recent_search'))
+        // get the index location of the item in recentSearchItems array
+        const recentSearchItemsIndex = recentSearchItems.indexOf(item)
+        // remove if item is in the recentSearchItems array
+        if (recentSearchItemsIndex !== -1) recentSearchItems.splice(recentSearchItemsIndex, 1)
+        // assign the new recentSearchItems array to the recent_search localstorage
+        localStorage.setItem('recent_search', JSON.stringify(recentSearchItems))
+        // if recentSearchItems is empty remove recent search box
+        if (recentSearchItems.length === 0) {
           commit('TOGGLE_RECENT_SEARCH')
         }
-        commit('SET_RECENT_SEARCH', newItems)
+        // assign the new recentSearchItems array to the the set recent search state
+        commit('SET_RECENT_SEARCH', recentSearchItems)
       } catch (e) {
         alert(e.message)
       }
     },
     BOOKMARK_ALBUM ({ commit }, payload) {
       try {
-        const newBookmarkItem = {
-          artistName: payload.album.artistName,
-          collectionCensoredName: payload.album.collectionCensoredName,
-          artworkUrl100: payload.album.artworkUrl100,
-          primaryGenreName: payload.album.primaryGenreName,
-          collectionViewUrl: payload.album.collectionViewUrl
-        }
+        // destructure and assign payload album objects to the new variables
+        const { artistName, collectionCensoredName, artworkUrl100, primaryGenreName, collectionViewUrl } = payload.album
+        // assign the new payload album variables as object items to newBookmarkItem variable
+        const newBookmarkItem = { artistName, collectionCensoredName, artworkUrl100, primaryGenreName, collectionViewUrl }
         let bookmarkAlbums = []
+        // check payload status
         if (payload.status === 'unbookmarked') {
+          // if status is unbookmarked assign bookmark_albums localstorage to boolmarkAlbums
           bookmarkAlbums = JSON.parse(localStorage.getItem('bookmark_albums'))
-          // remove from array
-          const oldBookmarkAlbums = bookmarkAlbums.map((e) => { return e.collectionCensoredName }).indexOf(payload.album.collectionCensoredName)
+          // check if the bookmarkAlbums item is already in the array
+          const oldBookmarkAlbums = bookmarkAlbums.map((e) => { return e.collectionCensoredName }).indexOf(collectionCensoredName)
+          // if is in the array remove payload item to bookmarkAlbums
           if (oldBookmarkAlbums !== -1) bookmarkAlbums.splice(oldBookmarkAlbums, 1)
+          // set the new bookmarkAlbums array to the localstorage
           localStorage.setItem('bookmark_albums', JSON.stringify(bookmarkAlbums))
         } else {
+          // if status is bookmark
+          // check if bookmark storage is null
           if (localStorage.getItem('bookmark_albums') === null) {
+            // push the newBookmarkItem to bookmarkAlbums
             bookmarkAlbums.push(newBookmarkItem)
+            // set the new bookmarkAlbums array to the localstorage
             localStorage.setItem('bookmark_albums', JSON.stringify(bookmarkAlbums))
           } else {
+            // if bookmark storage have datas
+            // assign bookmark_album localstorage data to bookmarkAlbums
             bookmarkAlbums = JSON.parse(localStorage.getItem('bookmark_albums'))
+            // push the newBookmarkItem to bookmarkAlbums
             bookmarkAlbums.push(newBookmarkItem)
+            // push the newBookmarkItem to bookmarkAlbums
             localStorage.setItem('bookmark_albums', JSON.stringify(bookmarkAlbums))
           }
         }
@@ -182,8 +209,10 @@ export default new Vuex.Store({
     },
     GET_BOOKMARK_ALBUMS ({ commit }) {
       try {
+        // assign bookmark_albums localstorage to bookmarkAlbums variable
         const bookmarkAlbums = localStorage.getItem('bookmark_albums')
         if (bookmarkAlbums !== null) {
+          // if not null assign the new bookmark albums array to the bookmark albums state
           commit('SET_BOOKMARK_ALBUMS', JSON.parse(bookmarkAlbums))
         }
       } catch (e) {
@@ -192,35 +221,30 @@ export default new Vuex.Store({
     },
     GET_SETTINGS ({ commit, state }) {
       try {
+        // assign settings localstorage to settings variable
         const settings = localStorage.getItem('settings')
+        // check if settings variable is not null
         if (settings !== null) {
+          // if not null assign the new setting array to the setting state
           commit('SET_SETTINGS', JSON.parse(settings))
         } else {
-          commit('SET_SETTINGS', state.settings)
+          // if null set the default state settings to localstorage
           localStorage.setItem('settings', JSON.stringify(state.settings))
         }
       } catch (e) {
         alert(e.message)
       }
     },
-    TOGGLE_PANEL_TYPE ({ commit, state }) {
-      try {
-        const panelType = state.settings.panelType === 'card' ? 'media' : 'card'
-        const newSettings = state.settings
-        newSettings['panelType'] = panelType
-        commit('SET_SETTINGS', newSettings)
-        localStorage.setItem('settings', JSON.stringify(newSettings))
-      } catch (e) {
-        alert(e.message)
-      }
-    },
     UPDATE_SETTINGS ({ commit, state }, payload) {
-      const settingValue = payload.settingValue
-      const settingName = payload.settingName
-      const newSettings = state.settings
-      newSettings[settingName] = settingValue
-      commit('SET_SETTINGS', newSettings)
-      localStorage.setItem('settings', JSON.stringify(newSettings))
+      // destructure and assign payload objects and state to the new variables
+      const { settingValue, settingName } = payload
+      const { settings } = state
+      // update settings by reassigning the settings object name to the payload object name
+      settings[settingName] = settingValue
+      // assign the new settings array to the settings state
+      commit('SET_SETTINGS', settings)
+      // assign the new settings array to the settings localstorage
+      localStorage.setItem('settings', JSON.stringify(settings))
     }
   }
 })

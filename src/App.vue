@@ -37,8 +37,13 @@
       :isMobile="isMobile"
       >
       </album-list>
-      <b-modal :active.sync="isSettingsModalActive" :canCancel=false has-modal-card >
-        <the-settings :settings="settings" @clickUpdateSettings="updateSettings"></the-settings>
+      <b-modal
+        :active.sync="isSettingsModalActive"
+        :canCancel=false has-modal-card >
+        <the-settings
+          :settings="settings"
+          @clickUpdateSettings="updateSettings">
+        </the-settings>
       </b-modal>
   </div>
 </template>
