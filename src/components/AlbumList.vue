@@ -20,7 +20,7 @@
               <div class="card" v-if="settings.panelType === 'card'">
                 <div class="card-image">
                   <figure class="image is-4by3">
-                    <img :src="album.artworkUrl100" :alt="album.collectionCensoredName">
+                    <img :src="replaceArtworkUrlSize(album.artworkUrl100, '300x250')" :alt="album.collectionCensoredName">
                   </figure>
                 </div>
                 <div class="card-content">
@@ -54,7 +54,7 @@
               <article class="media media-wrap" v-if="settings.panelType === 'media'">
                 <figure class="media-left">
                   <p class="image ">
-                    <img :src="album.artworkUrl100" :alt="album.collectionCensoredName">
+                    <img :src="replaceArtworkUrlSize(album.artworkUrl100, '130x130')" :alt="album.collectionCensoredName">
                   </p>
                 </figure>
                 <div class="media-content">
@@ -200,12 +200,14 @@ export default {
       }
     },
     isInBookmark (albumName) {
-      const inBookmark = this.bookmarkAlbums.findIndex(album => album.collectionCensoredName === albumName) > -1
-      return inBookmark
+      return this.bookmarkAlbums.findIndex(album => album.collectionCensoredName === albumName) > -1
     },
     onClickUpdateSettings () {
       const settingValue = this.settings.panelType === 'card' ? 'media' : 'card'
       this.$emit('clickUpdateSettings', 'panelType', settingValue)
+    },
+    replaceArtworkUrlSize (albumArtwork, newSize) {
+      return albumArtwork.replace('100x100', newSize)
     }
   }
 }
