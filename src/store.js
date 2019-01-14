@@ -99,10 +99,7 @@ export default new Vuex.Store({
             commit('SEARCH_FAILED', false)
             commit('SET_ALBUM', response.data.results)
             commit('SET_SEARCH_QUERY', payload.query)
-            // wait 2 second to assign the new search query to save to recent search action
-            setTimeout(() => {
-              dispatch('SAVE_TO_RECENT_SEARCH', payload.query)
-            }, 2000)
+            dispatch('SAVE_TO_RECENT_SEARCH', payload.query)
           }
         })
         .catch(() => {
