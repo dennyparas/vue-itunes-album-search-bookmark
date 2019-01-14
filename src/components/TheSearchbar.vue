@@ -9,6 +9,7 @@
           placeholder="e.g. Eminem"
           icon="magnify"
           @select="option => selected = option"
+          @keyup.enter="onClickSearch"
         ></b-autocomplete>
         <p class="control" v-if="searchQuery">
                <button @click="onClickClearSearch" class="button  is-medium "><i class="fas fa-times"></i></button>
