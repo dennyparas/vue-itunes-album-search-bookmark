@@ -94,11 +94,8 @@ export default {
     this.$store.dispatch('GET_BOOKMARK_ALBUMS')
   },
   mounted () {
-    if (this.windowWidth <= 768) {
-      this.isMobile = true
-    }
-
     window.onresize = () => {
+      this.windowWidth = window.innerWidth
       if (this.windowWidth <= 768) {
         this.isMobile = true
       } else {
