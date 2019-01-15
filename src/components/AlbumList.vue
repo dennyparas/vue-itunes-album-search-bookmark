@@ -82,13 +82,13 @@
                 </div>
               </article>
             </div>
-            <div class="columns is-mobile" v-if="isLoading">
-              <div class="column loading">
-                  <b-loading :is-full-page="false" :active.sync="isLoading" :can-cancel="false"></b-loading>
-              </div>
-            </div>
           </div>
           </transition>
+           <div class="columns is-mobile" v-if="isLoading">
+            <div class="column loading">
+                <b-loading :is-full-page="false" :active.sync="isLoading" :can-cancel="false"></b-loading>
+            </div>
+          </div>
           <div class="columns is-multiline is-mobile" v-if="!isLoading && albums.length > 0">
             <div class="column is-12" v-if="albums.length > 0">
               <hr>
@@ -110,7 +110,7 @@
               </div>
             </div>
           </template>
-          <template v-if="searchFailed">
+          <template v-if="searchFailed && !isLoading">
           <div class="columns is-multiline is-mobile">
             <div class="column">
               <h3 class="title is-4 has-text-centered">Nothing found. </h3>
