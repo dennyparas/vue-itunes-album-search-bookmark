@@ -61,7 +61,8 @@ export default {
   data () {
     return {
       isSettingsModalActive: false,
-      isMobile: false
+      isMobile: false,
+      windowWidth: window.innerWidth
     }
   },
   components: {
@@ -93,8 +94,12 @@ export default {
     this.$store.dispatch('GET_BOOKMARK_ALBUMS')
   },
   mounted () {
+    if (this.windowWidth <= 768) {
+      this.isMobile = true
+    }
+
     window.onresize = () => {
-      if (window.innerWidth <= 768) {
+      if (this.windowWidth <= 768) {
         this.isMobile = true
       } else {
         this.isMobile = false
