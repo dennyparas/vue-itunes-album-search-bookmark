@@ -218,6 +218,15 @@ export default {
 </script>
 
 <style scoped>
+.card, article.media {
+  transition: box-shadow .4s;
+}
+.card:hover, article.media:hover {
+  box-shadow: 0 0 20px rgba(33,33,33,.5);
+}
+img {
+  background: url('./../../public/images/200w_s.gif') 50% no-repeat;
+}
 .media:first-child {
   z-index: 1;
 }
