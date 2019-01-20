@@ -1,0 +1,63 @@
+main {
+  padding-top:140px;
+}
+.nav-search {
+  position:fixed!important;
+  z-index:39;
+  width: 100%;
+}
+.media-wrap .media-left, .media-modal .media-left {
+  width:130px;
+  height:130px;
+}
+.card, article.media-wrap {
+  transition: box-shadow .4s;
+}
+.card:hover, article.media-wrap:hover {
+  box-shadow: 0 0 20px rgba(33,33,33,.5);
+}
+.media-wrap .media-left {
+  width:130px;
+  height:130px;
+}
+.card-image, .media-left {
+  background: url('./images/200w_s.gif') 50% no-repeat !important;
+}
+.media:first-child {
+  z-index: 1;
+}
+.loading {
+  padding-top:50px;
+  height: 300px;
+}
+.card-content {
+  padding:1rem !important;
+}
+.media-content {
+  width:180px !important;
+}
+.overflow-content div {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+}
+.media-wrap {
+      border: 2px solid #f5f5f5;
+}
+.album-name {
+  font-size: 1.05rem !important;
+}
+i {
+  cursor: pointer;
+}
+.bookmarkIcon
+ {
+  color: rgb(255, 159, 159);
+}
+.bookmarkIcon:hover {
+  color: rgb(255, 21, 21);
+}
+.favorite {
+  color: rgb(255, 21, 21);
+}
