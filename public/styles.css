@@ -20,7 +20,7 @@ main {
   width:130px;
   height:130px;
 }
-.card-image, .media-left {
+.card-image, .media-wrap .media-left, .media-modal .media-left {
   background: url('./images/200w_s.gif') 50% no-repeat !important;
 }
 .media:first-child {
