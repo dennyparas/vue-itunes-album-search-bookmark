@@ -1,7 +1,7 @@
 <template>
-    <div class="section">
+    <section class="section">
       <div class="container" style="margin-top:0px;">
-        <div class="columns is-multiline is-mobile" v-if="!isLoading && albums.length > 0">
+        <div class="columns is-multiline is-mobile" v-if="!isAlbumLoading && albums.length > 0">
           <div class="column is-6" ><span class="is-size-5-desktop is-size-6-mobile has-text-grey" v-if="pageType !== 'bookmarks'"> Search Results</span> <span class="is-size-5-desktop is-size-6-mobile has-text-grey" v-else> Bookmarks</span></div>
           <div class="column is-5 has-text-right "><span class="has-text-grey-light is-size-6"> {{albums.length}} album(s) </span> </div>
           <div class="column is-1 has-text-left">
@@ -11,7 +11,7 @@
           </div>
         </div>
         <transition name="list" mode="out-in" >
-        <div class="columns is-multiline is-mobile" v-if="!isLoading && displayedAlbums.length > 0" :key="pageType">
+        <div class="columns is-multiline is-mobile" v-if="!isAlbumLoading && displayedAlbums.length > 0" :key="pageType">
             <div  class="column " :class="[settings.panelType === 'card' ? 'is-3-widescreen is-3-desktop is-4-tablet' : 'is-4-widescreen  is-4-desktop is-6-tablet is-12-mobile']" v-for="album in displayedAlbums" :key="album.collectionId">
               <div class="card" v-if="settings.panelType === 'card'" >
                 <div class="card-image">
@@ -22,7 +22,7 @@
                 <div class="card-content">
                   <div class="media">
                     <div class="media-content overflow-content">
-                      <div class="title is-size-6-widescreen is-size-6-desktop album-name">{{album.collectionCensoredName}}</div>
+                      <div class="title is-size-6-widescreen is-size-6-desktop album-name" ><a @click="onClickAlbumName(album.collectionId)">{{album.collectionCensoredName}}</a></div>
                       <div class="subtitle is-6">{{album.artistName}} <br>
                       <span class="has-text-grey-light">{{album.primaryGenreName}}</span></div>
                     </div>
@@ -36,7 +36,7 @@
                     </a>
                     <span class="heart card-footer-item">
                       <b-tooltip type="is-light" :label="isInBookmark(album.collectionCensoredName) ? 'click to unbookmarked' : 'click to bookmark'" position="is-top" :active="!isMobile">
-                        <i @click="onClickBookmarkAlbum(album)" class="fas fa-lg bookmarkIcon" :class="[{'favorite': isInBookmark(album.collectionCensoredName)}, settings.bookmarkIcon]"></i>
+                        <i @click="clickBookmarkAlbum(album)" class="fas fa-lg bookmarkIcon" :class="[{'favorite': isInBookmark(album.collectionCensoredName)}, settings.bookmarkIcon]"></i>
                       </b-tooltip>
                     </span>
                     <a v-if="settings.youtubeLink === 'true'" :href="`https://www.youtube.com/results?search_query=${album.artistName} - ${album.collectionCensoredName}`" target="_blank" class="card-footer-item">
@@ -56,7 +56,7 @@
                 <div class="media-content">
                   <div class="content overflow-content">
                     <div>
-                      <strong>{{album.collectionCensoredName}}</strong> <br>
+                      <strong><a @click="onClickAlbumName(album.collectionId)">{{album.collectionCensoredName}}</a></strong> <br>
                       {{album.artistName}} ( <span class="has-text-grey-light">{{album.primaryGenreName}}</span> )
                     </div>
                   </div>
@@ -69,10 +69,10 @@
                       </a>
                       <a class="level-item">
                         <b-tooltip type="is-light" :label="isInBookmark(album.collectionCensoredName) ? 'click to unbookmarked' : 'click to bookmark'" position="is-top" :active="!isMobile">
-                          <i @click="onClickBookmarkAlbum(album)" class="fas bookmarkIcon" :class="[{'favorite': isInBookmark(album.collectionCensoredName)}, settings.bookmarkIcon]"></i>
+                          <i @click="clickBookmarkAlbum(album)" class="fas bookmarkIcon" :class="[{'favorite': isInBookmark(album.collectionCensoredName)}, settings.bookmarkIcon]"></i>
                         </b-tooltip>
                       </a>
-                      <a v-if="settings.youtubeLink === 'true'" class="level-item" :href="`https://www.youtube.com/results?search_query=${album.collectionCensoredName}`" target="_blank">
+                      <a v-if="settings.youtubeLink === 'true'" class="level-item" :href="`https://www.youtube.com/results?search_query=${album.artistName} - ${album.collectionCensoredName}`" target="_blank">
                         <b-tooltip type="is-light" label="search on youtube" position="is-top" :active="!isMobile">
                           <i class="fab fa-youtube"></i>
                         </b-tooltip>
@@ -84,12 +84,12 @@
             </div>
           </div>
           </transition>
-           <div class="columns is-mobile" v-if="isLoading">
+           <div class="columns is-mobile" v-if="isAlbumLoading">
             <div class="column loading">
-                <b-loading :is-full-page="false" :active.sync="isLoading" :can-cancel="false"></b-loading>
+                <b-loading :is-full-page="false" :active.sync="isAlbumLoading" :can-cancel="false"></b-loading>
             </div>
           </div>
-          <div class="columns is-multiline is-mobile" v-if="!isLoading && albums.length > 0">
+          <div class="columns is-multiline is-mobile" v-if="!isAlbumLoading && albums.length > 0">
             <div class="column is-12" v-if="albums.length > 0">
               <hr>
               <b-pagination
@@ -110,7 +110,7 @@
               </div>
             </div>
           </template>
-          <template v-if="searchFailed && !isLoading">
+          <template v-if="searchFailed && !isAlbumLoading">
           <div class="columns is-multiline is-mobile">
             <div class="column">
               <h3 class="title is-4 has-text-centered">Nothing found. </h3>
@@ -119,7 +119,7 @@
           </div>
           </template>
       </div>
-    </div>
+    </section>
 </template>
 
 <script>
@@ -143,7 +143,7 @@ export default {
       type: String,
       required: true
     },
-    isLoading: {
+    isAlbumLoading: {
       type: Boolean,
       required: true
     },
@@ -162,6 +162,18 @@ export default {
     isMobile: {
       type: Boolean,
       required: true
+    },
+    clickBookmarkAlbum: {
+      type: Function,
+      required: true
+    },
+    isInBookmark: {
+      type: Function,
+      required: true
+    },
+    replaceArtworkUrlSize: {
+      type: Function,
+      required: true
     }
   },
   computed: {
@@ -177,92 +189,13 @@ export default {
       let to = (current * perPage)
       return albums.slice(from, to)
     },
-    onClickBookmarkAlbum (album) {
-      if (this.isInBookmark(album.collectionCensoredName)) {
-        this.$dialog.confirm({
-          message: `Are you sure you want to unbookmark this album? <b>${album.collectionCensoredName} album</b>`,
-          type: 'is-danger',
-          hasIcon: true,
-          onConfirm: () => {
-            this.$emit('clickBookmarkAlbum', album, 'unbookmarked')
-            this.$toast.open({
-              duration: 3000,
-              message: `"${album.collectionCensoredName} album" has been unbookmark!`,
-              position: 'is-bottom-right',
-              type: 'is-danger'
-            })
-          }
-        })
-      } else {
-        this.$toast.open({
-          duration: 3000,
-          message: `"${album.collectionCensoredName} album" bookmarked!`,
-          position: 'is-bottom',
-          type: 'is-info'
-        })
-        this.$emit('clickBookmarkAlbum', album, 'bookmark')
-      }
-    },
-    isInBookmark (albumName) {
-      return this.bookmarkAlbums.findIndex(album => album.collectionCensoredName === albumName) > -1
-    },
     onClickUpdateSettings () {
       const settingValue = this.settings.panelType === 'card' ? 'media' : 'card'
       this.$emit('clickUpdateSettings', 'panelType', settingValue)
     },
-    replaceArtworkUrlSize (albumArtwork, newSize) {
-      return albumArtwork.replace('100x100', newSize)
+    onClickAlbumName (albumId) {
+      this.$emit('clickAlbumName', albumId)
     }
   }
 }
 </script>
-
-<style scoped>
-.card, article.media {
-  transition: box-shadow .4s;
-}
-.card:hover, article.media:hover {
-  box-shadow: 0 0 20px rgba(33,33,33,.5);
-}
-img {
-  background: url('./../../public/images/200w_s.gif') 50% no-repeat;
-}
-.media:first-child {
-  z-index: 1;
-}
-.loading {
-  padding-top:50px;
-  height: 300px;
-}
-.card-content {
-  padding:1rem !important;
-}
-.media-content {
-  width:180px !important;
-}
-.overflow-content div {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  width: 100%;
-}
-.media-wrap {
-      border: 2px solid #f5f5f5;
-}
-.album-name {
-  font-size: 1.05rem !important;
-}
-i {
-  cursor: pointer;
-}
-.bookmarkIcon
- {
-  color: rgb(255, 159, 159);
-}
-.bookmarkIcon:hover {
-  color: rgb(255, 21, 21);
-}
-.favorite {
-  color: rgb(255, 21, 21);
-}
-</style>

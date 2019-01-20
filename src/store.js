@@ -8,11 +8,14 @@ export default new Vuex.Store({
   state: {
     settings: { initialSearchQuery: 'eminem', searchQuery: '', panelType: 'card', bookmarkIcon: 'fa-star', perPage: '20', youtubeLink: 'false' },
     albums: [],
+    albumTracks: [],
     bookmarkAlbums: [],
     searchFailed: false,
+    albumTracksFailed: false,
     recentSearch: [],
     showRecentSearchBox: false,
-    isLoading: false,
+    isAlbumLoading: false,
+    isAlbumTracksLoading: false,
     language: 'en_us',
     pageType: 'search'
   },
@@ -20,20 +23,32 @@ export default new Vuex.Store({
     SEARCH_QUERY (state) {
       return state.settings.searchQuery
     },
+    INITIAL_SEARCH_QUERY (state) {
+      return state.settings.initialSearchQuery
+    },
     GET_ALBUMS (state) {
       return state.albums
+    },
+    GET_ALBUM_TRACKS (state) {
+      return state.albumTracks
     },
     GET_RECENT_SEARCH (state) {
       return state.recentSearch
     },
-    IS_LOADING (state) {
-      return state.isLoading
+    IS_ALBUM_LOADING (state) {
+      return state.isAlbumLoading
+    },
+    IS_ALBUM_TRACKS_LOADING (state) {
+      return state.isAlbumTracksLoading
     },
     SEARCH_FAILED (state) {
       return state.searchFailed
     },
+    ALBUM_TRACKS_FAILED (state) {
+      return state.albumTracksFailed
+    },
     BOOKMARK_ALBUMS (state) {
-      return state.bookmarkAlbums
+      return state.bookmarkAlbums.reverse()
     },
     PAGE_TYPE (state) {
       return state.pageType
@@ -53,6 +68,9 @@ export default new Vuex.Store({
     SET_ALBUM (state, data) {
       state.albums = data
     },
+    SET_ALBUM_TRACKS (state, data) {
+      state.albumTracks = data
+    },
     SEARCH_FAILED (state, action) {
       state.searchFailed = action
     },
@@ -70,8 +88,11 @@ export default new Vuex.Store({
     SET_BOOKMARK_ALBUMS (state, albums) {
       state.bookmarkAlbums = albums
     },
-    IS_LOADING (state, action) {
-      state.isLoading = action
+    IS_ALBUM_LOADING (state, action) {
+      state.isAlbumLoading = action
+    },
+    IS_ALBUM_TRACKS_LOADING (state, action) {
+      state.isAlbumTracksLoading = action
     },
     SET_PAGE_TYPE (state, type) {
       if (type === 'bookmarks') { state.settings.searchQuery = '' }
@@ -79,23 +100,28 @@ export default new Vuex.Store({
     },
     SET_SETTINGS (state, settings) {
       state.settings = settings
+    },
+    SET_ALBUM_TRACKS_FAILED (state, action) {
+      state.albumTracksFailed = action
+    },
+    RESET_ALBUM_TRACKS (state) {
+      state.albumTracks = []
     }
-
   },
   actions: {
     SEARCH_ALBUMS ({ commit, dispatch }, payload) {
       // show loading animation
-      commit('IS_LOADING', true)
+      commit('IS_ALBUM_LOADING', true)
       return axios.get(`${payload.url}`)
         .then((response) => {
           if (response.data.results.length === 0) {
             // if search response data results is empty commit search failed and clear the search input
             commit('CLEAR_SEARCH')
             commit('SEARCH_FAILED', true)
-            commit('IS_LOADING', false)
+            commit('IS_ALBUM_LOADING', false)
           } else {
             // assign the search data results to set album state and query to set search query state
-            commit('IS_LOADING', false)
+            commit('IS_ALBUM_LOADING', false)
             commit('SEARCH_FAILED', false)
             commit('SET_ALBUM', response.data.results)
             commit('SET_SEARCH_QUERY', payload.query)
@@ -106,7 +132,7 @@ export default new Vuex.Store({
           // if error commit search failed and clear the search input
           commit('CLEAR_SEARCH')
           commit('SEARCH_FAILED', true)
-          commit('IS_LOADING', false)
+          commit('IS_ALBUM_LOADING', false)
         })
     },
     SAVE_TO_RECENT_SEARCH ({ commit }, payload) {
@@ -167,9 +193,9 @@ export default new Vuex.Store({
     BOOKMARK_ALBUM ({ commit }, payload) {
       try {
         // destructure and assign payload album objects to the new variables
-        const { artistName, collectionCensoredName, artworkUrl100, primaryGenreName, collectionViewUrl } = payload.album
+        const { artistName, collectionCensoredName, artworkUrl100, primaryGenreName, collectionViewUrl, collectionId } = payload.album
         // assign the new payload album variables as object items to newBookmarkItem variable
-        const newBookmarkItem = { artistName, collectionCensoredName, artworkUrl100, primaryGenreName, collectionViewUrl }
+        const newBookmarkItem = { artistName, collectionCensoredName, artworkUrl100, primaryGenreName, collectionViewUrl, collectionId }
         let bookmarkAlbums = []
         // check payload status
         if (payload.status === 'unbookmarked') {
@@ -242,6 +268,25 @@ export default new Vuex.Store({
       commit('SET_SETTINGS', settings)
       // assign the new settings array to the settings localstorage
       localStorage.setItem('settings', JSON.stringify(settings))
+    },
+    GET_ALBUM_TRACKS ({ commit }, payload) {
+      // show loading animation
+      commit('IS_ALBUM_TRACKS_LOADING', true)
+      return axios.get(`${payload.url}`)
+        .then((response) => {
+          if (response.data.results.length === 0) {
+            commit('SET_ALBUM_TRACKS_FAILED', true)
+            commit('IS_ALBUM_TRACKS_LOADING', false)
+          } else {
+            commit('SET_ALBUM_TRACKS', response.data.results)
+            commit('IS_ALBUM_TRACKS_LOADING', false)
+          }
+        })
+        .catch(() => {
+          // if error commit search failed and clear the search input
+          commit('SET_ALBUM_TRACKS_FAILED', false)
+          commit('IS_ALBUM_TRACKS_LOADING', false)
+        })
     }
   }
 })
