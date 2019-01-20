@@ -10,15 +10,38 @@
         <div class="navbar-item">
           <div class="buttons">
             <div class="icon is-large nav-icon" v-if="recentSearch.length > 0">
-              <b-tooltip type="is-light" label="Recent Search" position="is-bottom" :active="!isMobile" >
+              <b-tooltip type="is-light" :label="`${recentSearch.length} recent search`" position="is-bottom" :active="!isMobile" >
                 <i @click="onClickToggleRecentSearchBox" class="fas fa-history fa-2x" :class="{'icon-active': showRecentSearchBox}"></i>
               </b-tooltip>
               <span class="badge" v-if="recentSearch.length > 0">{{recentSearch.length}}</span>
             </div>
             <span class="icon is-large nav-icon">
-              <b-tooltip type="is-light" label="Bookmarks" position="is-bottom" :active="!isMobile">
+              <b-tooltip v-if="pageType === 'bookmarks' || isMobile || bookmarkAlbums.length === 0" type="is-light" :label="`${bookmarkAlbums.length} album bookmarks`" position="is-bottom" :active="!isMobile" >
                 <i @click="onClickShowBookmarks" class="fas fa-2x" :class="[{'icon-active': pageType === 'bookmarks'}, settings.bookmarkIcon]"></i>
               </b-tooltip>
+              <!-- Dropdown -->
+              <b-dropdown v-else hoverable position="is-bottom-left">
+                <i slot="trigger" @click="onClickShowBookmarks" class="fas fa-2x" :class="[{'icon-active': pageType === 'bookmarks'}, settings.bookmarkIcon]"></i>
+                  <b-dropdown-item  v-for="(album, index) in latestBookmarkAlbums" :key="index" @click="onClickAlbumName(album.collectionId)" >
+                    <article class="media">
+                      <figure class="media-left">
+                         <p class="image is-64x64 ">
+                        <img :src="album.artworkUrl100">
+                        </p>
+                      </figure>
+                      <div class="media-content  overflow-content">
+                        <div class="content ">
+                          <p>
+                            <strong>{{album.collectionCensoredName}}</strong>
+                            <br>
+                            {{album.artistName}}
+                          </p>
+                        </div>
+                      </div>
+                    </article>
+                  </b-dropdown-item>
+                  <b-dropdown-item class="has-text-centered" v-if="bookmarkAlbums.length > 5" @click="onClickShowBookmarks">View All </b-dropdown-item>
+              </b-dropdown>
               <span class="badge" v-if="bookmarkAlbums.length > 0">{{bookmarkAlbums.length}}</span>
             </span>
             <span class="icon is-large nav-icon">
@@ -62,6 +85,11 @@ export default {
       required: true
     }
   },
+  computed: {
+    latestBookmarkAlbums () {
+      return this.bookmarkAlbums.slice(0, 5)
+    }
+  },
   methods: {
     onClickToggleRecentSearchBox () {
       this.$emit('clickToggleRecentSearchBox')
@@ -74,12 +102,23 @@ export default {
     },
     onClickTitle () {
       this.$emit('clickTitle')
+    },
+    onClickAlbumName (albumId) {
+      this.$emit('clickAlbumName', albumId)
     }
+
   }
 }
 </script>
 
 <style scoped >
+a.dropdown-item {
+  padding-right: 1rem ;
+  border-bottom: 1px solid #ccc;
+}
+img {
+  max-height: 100px !important;
+}
 .navbar-item {
   cursor: pointer
 }
