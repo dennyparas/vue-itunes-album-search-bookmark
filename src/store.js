@@ -283,8 +283,7 @@ export default new Vuex.Store({
           }
         })
         .catch(() => {
-          // if error commit search failed and clear the search input
-          commit('SET_ALBUM_TRACKS_FAILED', false)
+          commit('SET_ALBUM_TRACKS_FAILED', true)
           commit('IS_ALBUM_TRACKS_LOADING', false)
         })
     }

@@ -61,9 +61,21 @@
         :onCancel="resetAlbumTracks"
         scroll="clip"
         >
-        <div class="columns is-mobile"  v-if="albumTracks.length === 0">
-          <div class="column loading">
-              <b-loading :is-full-page="false" :active.sync="isAlbumTracksLoading" :can-cancel="false"></b-loading>
+        <div class="columns is-mobile is-centered" v-if="!albumTracksFailed && albumTracks.length === 0" >
+          <div class="columns is-mobile"  >
+            <div class="column loading">
+                <b-loading :is-full-page="false" :active.sync="isAlbumTracksLoading" :can-cancel="false"></b-loading>
+            </div>
+          </div>
+        </div>
+        <div class="container" v-else-if="albumTracksFailed">
+          <div class="columns is-mobile is-centered"  >
+            <div class="column is-4">
+              <b-message  type="is-danger" has-icon >
+                Error loading album track list. <br>
+                Please check again later.
+              </b-message>
+            </div>
           </div>
         </div>
         <album-track-list  v-else
@@ -119,6 +131,7 @@ export default {
       isAlbumLoading: 'IS_ALBUM_LOADING',
       isAlbumTracksLoading: 'IS_ALBUM_TRACKS_LOADING',
       searchFailed: 'SEARCH_FAILED',
+      albumTracksFailed: 'ALBUM_TRACKS_FAILED',
       settings: 'GET_SETTINGS'
     }),
     showRecentSearchBox () {
