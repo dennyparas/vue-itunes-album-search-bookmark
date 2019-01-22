@@ -103,6 +103,7 @@ export default new Vuex.Store({
     },
     SET_ALBUM_TRACKS_FAILED (state, action) {
       state.albumTracksFailed = action
+      state.albumTracks = []
     },
     RESET_ALBUM_TRACKS (state) {
       state.albumTracks = []
@@ -269,23 +270,28 @@ export default new Vuex.Store({
       // assign the new settings array to the settings localstorage
       localStorage.setItem('settings', JSON.stringify(settings))
     },
-    GET_ALBUM_TRACKS ({ commit }, payload) {
-      // show loading animation
-      commit('IS_ALBUM_TRACKS_LOADING', true)
-      return axios.get(`${payload.url}`)
-        .then((response) => {
-          if (response.data.results.length === 0) {
+    GET_ALBUM_TRACKS ({ commit, state }, payload) {
+      // reset album tracks
+      if (state.albumTracks.length > 0) {
+        commit('RESET_ALBUM_TRACKS')
+      } else {
+        // show loading animation
+        commit('IS_ALBUM_TRACKS_LOADING', true)
+        return axios.get(`${payload.url}`)
+          .then((response) => {
+            if (response.data.results.length === 0) {
+              commit('SET_ALBUM_TRACKS_FAILED', true)
+              commit('IS_ALBUM_TRACKS_LOADING', false)
+            } else {
+              commit('SET_ALBUM_TRACKS', response.data.results)
+              commit('IS_ALBUM_TRACKS_LOADING', false)
+            }
+          })
+          .catch(() => {
             commit('SET_ALBUM_TRACKS_FAILED', true)
             commit('IS_ALBUM_TRACKS_LOADING', false)
-          } else {
-            commit('SET_ALBUM_TRACKS', response.data.results)
-            commit('IS_ALBUM_TRACKS_LOADING', false)
-          }
-        })
-        .catch(() => {
-          commit('SET_ALBUM_TRACKS_FAILED', true)
-          commit('IS_ALBUM_TRACKS_LOADING', false)
-        })
+          })
+      }
     }
   }
 })
