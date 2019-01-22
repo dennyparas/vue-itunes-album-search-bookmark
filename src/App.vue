@@ -2,6 +2,7 @@
   <div id="app">
     <div  class="nav-search">
       <the-navbar
+        v-show="showNavbar"
         @clickToggleRecentSearchBox="toggleRecentSearchBox"
         @clickShowBookmarks="showBookmarks"
         @clickSettings="showSettingsModal"
@@ -88,6 +89,7 @@
           >
         </album-track-list>
       </b-modal>
+      <the-footer></the-footer>
     </main>
   </div>
 </template>
@@ -99,6 +101,7 @@ import RecentSearchBox from './components/RecentSearchBox'
 import AlbumList from './components/AlbumList'
 import TheSettings from './components/TheSettings'
 import AlbumTrackList from './components/AlbumTrackList'
+import TheFooter from './components/TheFooter'
 import { mapGetters } from 'vuex'
 export default {
   name: 'app',
@@ -107,7 +110,8 @@ export default {
       isSettingsModalActive: false,
       isAlbumTracksModalActive: false,
       isMobile: false,
-      windowWidth: window.innerWidth
+      windowWidth: window.innerWidth,
+      showNavbar: true
     }
   },
   components: {
@@ -116,7 +120,8 @@ export default {
     RecentSearchBox,
     TheSettings,
     AlbumList,
-    AlbumTrackList
+    AlbumTrackList,
+    TheFooter
   },
   computed: {
     ...mapGetters({
@@ -142,6 +147,10 @@ export default {
     this.$store.dispatch('GET_SETTINGS')
     this.$store.dispatch('GET_RECENT_SEARCH')
     this.$store.dispatch('GET_BOOKMARK_ALBUMS')
+    window.addEventListener('scroll', this.toggleNavbar)
+  },
+  destroyed () {
+    window.removeEventListener('scroll', this.toggleNavbar)
   },
   mounted () {
     window.onresize = () => {
@@ -165,9 +174,6 @@ export default {
       this.$store.commit('CLEAR_SEARCH')
     },
     toggleRecentSearchBox () {
-      if (!this.showRecentSearchBox) {
-        window.scrollTo(0, 0)
-      }
       this.$store.commit('TOGGLE_RECENT_SEARCH')
     },
     removeRecentSearchItem (item) {
@@ -233,6 +239,14 @@ export default {
     },
     replaceArtworkUrlSize (albumArtwork, newSize) {
       return albumArtwork.replace('100x100', newSize)
+    },
+    toggleNavbar () {
+      let scrollBarPosition = window.pageYOffset | document.body.scrollTop
+      if (scrollBarPosition > 100) {
+        this.showNavbar = false
+      } else {
+        this.showNavbar = true
+      }
     }
   }
 }
