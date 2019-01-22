@@ -63,6 +63,12 @@ i {
 }
 
 .footer {
+  width: 100%;
+  bottom: 0;
   background-color: #fafafa;
   padding: 1.5rem 1.5rem 1.5rem !important;
+}
+
+.footer-fixed {
+  position: fixed;
 }

@@ -89,8 +89,8 @@
           >
         </album-track-list>
       </b-modal>
-      <the-footer></the-footer>
     </main>
+    <the-footer :class="{'footer-fixed': pageType === 'search' && albums.length === 0 || pageType === 'bookmarks' && bookmarkAlbums.length === 0 || isAlbumLoading }"></the-footer>
   </div>
 </template>
 
