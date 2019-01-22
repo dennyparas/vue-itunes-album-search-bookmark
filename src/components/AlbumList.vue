@@ -181,6 +181,13 @@ export default {
       return this.paginate(this.albums)
     }
   },
+  watch: {
+    albums (val, oldVal) {
+      if (val !== oldVal) {
+        this.current = 1
+      }
+    }
+  },
   methods: {
     paginate (albums) {
       let current = this.current
