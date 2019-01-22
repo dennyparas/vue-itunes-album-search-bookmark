@@ -30,7 +30,7 @@
                 </div>
                  <footer class="card-footer">
                     <a :href="album.collectionViewUrl" target="_blank" class="card-footer-item">
-                      <b-tooltip type="is-light" label="visit itunes page" position="is-top" :active="!isMobile">
+                      <b-tooltip type="is-light" label="Download on iTunes" position="is-top" :active="!isMobile">
                         <i class="fab fa-itunes-note"></i>
                       </b-tooltip>
                     </a>
@@ -63,7 +63,7 @@
                   <div class="level is-mobile">
                     <div class="level-left">
                       <a  class="level-item" :href="album.collectionViewUrl" target="_blank">
-                        <b-tooltip type="is-light" label="visit itunes page" position="is-top" :active="!isMobile">
+                        <b-tooltip type="is-light" label="Download on iTunes" position="is-top" :active="!isMobile">
                           <i class="fab fa-itunes-note"></i>
                         </b-tooltip>
                       </a>
