@@ -48,6 +48,7 @@
         :isMobile="isMobile"
         >
       </album-list>
+      <!-- settings modal -->
       <b-modal
         :active.sync="isSettingsModalActive"
         :canCancel=true has-modal-card >
@@ -56,6 +57,7 @@
           @clickUpdateSettings="updateSettings">
         </the-settings>
       </b-modal>
+      <!-- album tracklist modal -->
       <b-modal
         :active.sync="isAlbumTracksModalActive"
         :canCancel=true has-modal-card
@@ -137,7 +139,8 @@ export default {
       isAlbumTracksLoading: 'IS_ALBUM_TRACKS_LOADING',
       searchFailed: 'SEARCH_FAILED',
       albumTracksFailed: 'ALBUM_TRACKS_FAILED',
-      settings: 'GET_SETTINGS'
+      settings: 'GET_SETTINGS',
+      isAppError: 'IS_APP_ERROR'
     }),
     showRecentSearchBox () {
       return this.$store.state.showRecentSearchBox
