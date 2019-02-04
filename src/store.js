@@ -305,6 +305,7 @@ export default new Vuex.Store({
           commit('IS_ALBUM_TRACKS_LOADING', false)
         }
       } catch (err) {
+        commit('IS_ALBUM_TRACKS_LOADING', false)
         commit('APP_ERROR', err.message)
       }
     }
