@@ -111,7 +111,6 @@ export default {
     return {
       isSettingsModalActive: false,
       isAlbumTracksModalActive: false,
-      isMobile: false,
       windowWidth: window.innerWidth,
       showNavbar: true
     }
@@ -144,6 +143,9 @@ export default {
     }),
     showRecentSearchBox () {
       return this.$store.state.showRecentSearchBox
+    },
+    isMobile () {
+      return this.$mq === 'mobile'
     }
   },
   created () {
@@ -154,16 +156,6 @@ export default {
   },
   destroyed () {
     window.removeEventListener('scroll', this.toggleNavbar)
-  },
-  mounted () {
-    window.onresize = () => {
-      this.windowWidth = window.innerWidth
-      if (this.windowWidth <= 768) {
-        this.isMobile = true
-      } else {
-        this.isMobile = false
-      }
-    }
   },
   methods: {
     searchAlbums (query) {
